@@ -1,4 +1,12 @@
 *{
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
+}
+#root{
+  max-width: 1170px;
+  margin: 0 auto;
+}
+html{
+  height: auto !important;
 }
