@@ -68,6 +68,7 @@ class Index extends React.Component {
                                                 this.jump(item.id)
                                             }}
                                             key={index}
+                                            style={{animationDelay:0.05*index+'s'}}
                                             className={styles.box}>
                                             <p className={styles.title}>{item.title}</p>
                                             <p className={styles.content}
