@@ -10,3 +10,7 @@
 html{
   height: auto !important;
 }
+.lazyload{
+  opacity: 0;
+  transition: opacity 1s;
+}
