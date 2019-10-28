@@ -29,6 +29,7 @@
     box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
     padding: 10px 15px;
     cursor: pointer;
+    animation: faderight .2s;
 
     p {
         color: #337ab7;
@@ -45,6 +46,15 @@
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
+        max-height:46px
+    }
+}
+@keyframes faderight{
+    from{
+        transform: translateX(-100%)
+    }
+    to{
+        transform: translateX(0%)
     }
 }
 
@@ -88,4 +98,8 @@
     div:hover span {
         background-color: rgba(0, 0, 0, 0.1)
     }
+}
+.loading{
+    margin: 40px auto;
+    display: block;
 }
