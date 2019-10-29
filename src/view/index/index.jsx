@@ -1,8 +1,10 @@
 import React from 'react';
 import styles from './index.pcss'
-import { Tabs, Input, Pagination, Spin } from 'antd';
+import {Tabs, Input, Pagination, Spin} from 'antd';
 import Footer from '../components/footer';
 import data from './data.json';
+import common from '../../static/jsx/common';
+import axios from 'axios';
 const {TabPane} = Tabs;
 const {Search} = Input;
 function callback(key) {
@@ -15,26 +17,60 @@ class Index extends React.Component {
             example: [
                 '李白', '杜甫', '白居易', '苏轼', '于谦'
             ],
-            list: data,
-            loading:false
+            list: [],
+            loading: false,
+            pageinfo:{},
+            keywords:''
         }
     }
     search = (val) => {
+        this.setState({
+            keywords:val
+        })
+        this.props.history.push('/index?keywords='+val);
+        this.getdata(1,val)
         console.log('val: ', val);
     }
     getdata = (pageNo) => {
         console.log('pageNo: ', pageNo);
+        // let pageinfo = data.pop();
+        // this.setState({
+        //     pageinfo: pageinfo,
+        //     list: data
+        // })
+        this.setState({
+            loading:true
+        })
+        axios
+            .get('http://owiseman.com:33315/data.json', {
+            params: {
+                keywords: this.keywords,
+                page: pageNo,
+                size: 10
+            }
+        })
+            .then((res) => {
+                let pageinfo = res.pop();
+                this.setState({
+                    pageinfo: pageinfo,
+                    list: res,
+                    loading:false
+                })
+                console.log('res: ', res);
+            })
+            .catch((err) => {
+                console.log('err: ', err);
+            })
     }
     jump = (id) => {
         console.log('id: ', id);
         this
             .props
             .history
-            .push('/details/'+id)
+            .push('/details/' + id)
     }
     render() {
         console.log(this.state.list);
-        
         return (
             <div>
                 <header className={styles.header}><img height='200' src={require('../../static/img/header.jpeg')}/></header>
@@ -45,8 +81,7 @@ class Index extends React.Component {
                             enterButton="搜索"
                             size="large"
                             onSearch={this.search}/>
-                        <div className={styles.example}>搜索示例：
-                        {this
+                        <div className={styles.example}>搜索示例： {this
                                 .state
                                 .example
                                 .map((item) => {
@@ -54,35 +89,42 @@ class Index extends React.Component {
                                         <a href='#' key={item}>{item}</a>
                                     )
                                 })
-                        }</div>
+}</div>
                         <hr className={styles.hr}></hr>
                         <div className={styles.listbox}>
-                            {this.state.loading ? <Spin className={styles.loading} size="large" /> : this
-                                .state
-                                .list
-                                .map((item, index) => {
-                                    return (
-                                        <div
-                                           id={'box'+index}
-                                            onClick={() => {
-                                                this.jump(item.id)
-                                            }}
-                                            key={index}
-                                            style={{animationDelay:0.05*index+'s'}}
-                                            className={styles.box}>
-                                            <p className={styles.title}>{item.title}</p>
-                                            <p className={styles.content}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: item.content
-                                                }}></p>
-                                        </div>
-                                    )
-                                })}
+                            {this.state.loading
+                                ? <Spin className={styles.loading} size="large"/>
+                                : this.state.list.length == 0
+                                    ? <div className={styles.nothing}>暂无数据</div>
+                                    : this
+                                        .state
+                                        .list
+                                        .map((item, index) => {
+                                            return (
+                                                <div
+                                                    id={'box' + index}
+                                                    onClick={() => {
+                                                    this.jump(item.id)
+                                                }}
+                                                    key={index}
+                                                    style={{
+                                                    animationDelay: 0.05 *index + 's'
+                                                }}
+                                                    className={styles.box}>
+                                                    <p className={styles.title}>{item.title}</p>
+                                                    <p
+                                                        className={styles.content}
+                                                        dangerouslySetInnerHTML={{
+                                                        __html: item.content
+                                                    }}></p>
+                                                </div>
+                                            )
+                                        })}
                         </div>
                         <div className={styles.pagination}><Pagination
                             showQuickJumper
-                            defaultCurrent={2}
-                            total={500}
+                            defaultCurrent={1}
+                            total={this.state.pageinfo.pageTotal}
                             onChange={this.getdata}/></div>
                     </TabPane>
                     <TabPane tab="知识图谱可视化" key="2">
@@ -114,19 +156,16 @@ class Index extends React.Component {
                         </div>
                     </TabPane>
                 </Tabs>
-                <Footer />
+                <Footer/>
             </div>
         )
     }
-    componentWillMount(){
-        
-    }
+    componentWillMount() {}
     componentDidMount() {
-        setTimeout(() => {
-            this.setState({
-                loading:false
-            })
-        }, 100);
+        this.setState({
+            keywords: common.geturldata(this.props.location.search).keywords
+        })
+        this.getdata(1)
     }
 
 }
