@@ -6,8 +6,7 @@ const footer = () => {
     }
     return (
         <div style={footercss}>
-            <p>©版权所有 互联网教育智能技术及应用国家工程实验室</p>
-            <p>联络合作或意见反馈请询xxxxxxx</p>
+            <p>©版权所有 四川大学华西临床医学院|华西医院病例研究室</p>
         </div>
     )
 }

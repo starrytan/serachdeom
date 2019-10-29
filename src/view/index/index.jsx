@@ -50,7 +50,6 @@ class Index extends React.Component {
                 }
             })
             .then((res) => {
-                console.log(res.data);
                 let pageinfo = res.data.pop();
                 this.setState({
                     pageinfo: pageinfo,
@@ -74,7 +73,7 @@ class Index extends React.Component {
         console.log(this.state.list);
         return (
             <div>
-                <header className={styles.header}><img height='200' src={require('../../static/img/header.jpeg')}/></header>
+                <header className={styles.header}><img height='200' src={require('../../static/img/header.png')}/></header>
                 <Tabs defaultActiveKey="1" onChange={callback}>
                     <TabPane tab="知识图谱语义搜索" key="1">
                         <Search
@@ -112,7 +111,7 @@ class Index extends React.Component {
                                                     animationDelay: 0.05 *index + 's'
                                                 }}
                                                     className={styles.box}>
-                                                    <p className={styles.title}>{item.title}</p>
+                                                    <p className={styles.title}>{item.section}</p>
                                                     <p
                                                         className={styles.content}
                                                         dangerouslySetInnerHTML={{
