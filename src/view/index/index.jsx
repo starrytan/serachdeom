@@ -15,12 +15,12 @@ class Index extends React.Component {
         super(props)
         this.state = {
             example: [
-                '李白', '杜甫', '白居易', '苏轼', '于谦'
+//                '李白', '杜甫', '白居易', '苏轼', '于谦'
             ],
             list: [],
             loading: false,
             pageinfo:{},
-            keywords:''
+            keywords:'title888'
         }
     }
     search = (val) => {
@@ -28,7 +28,7 @@ class Index extends React.Component {
             keywords:val
         })
         this.props.history.push('/index?keywords='+val);
-        this.getdata(1,val)
+        this.getdata(0,val)
         console.log('val: ', val);
     }
     getdata = (pageNo) => {
@@ -42,8 +42,15 @@ class Index extends React.Component {
             loading:true
         })
         axios
-            .get(`/querykeywords?keywords=${this.state.keywords}&page=${pageNo}&size=10`)
+            .get(`http://localhost:8088/querykeywords`,{
+                params:{
+                    keywords:this.state.keywords,
+                    page:pageNo,
+                    size:10
+                }
+            })
             .then((res) => {
+                console.log(res.data);
                 let pageinfo = res.data.pop();
                 this.setState({
                     pageinfo: pageinfo,
@@ -77,7 +84,7 @@ class Index extends React.Component {
                             onSearch={this.search}/>
                         <div className={styles.example}>搜索示例： {this
                                 .state
-                                .example
+                                 .example
                                 .map((item) => {
                                     return (
                                         <a href='#' key={item}>{item}</a>
@@ -117,11 +124,11 @@ class Index extends React.Component {
                         </div>
                         <div className={styles.pagination}><Pagination
                             showQuickJumper
-                            defaultCurrent={1}
+                            defaultCurrent={0}
                             total={this.state.pageinfo.pageTotal}
                             onChange={this.getdata}/></div>
                     </TabPane>
-                    {/* <TabPane tab="知识图谱可视化" key="2">
+                {/*  <TabPane tab="知识图谱可视化" key="2">
                         <div className={styles.tipsbox}>
                             <div
                                 style={{
@@ -148,7 +155,7 @@ class Index extends React.Component {
                                 <span>诗人社交网络</span>
                             </div>
                         </div>
-                    </TabPane> */}
+                    </TabPane>*/}
                 </Tabs>
                 <Footer/>
             </div>
