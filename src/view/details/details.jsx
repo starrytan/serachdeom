@@ -28,8 +28,6 @@ class Details extends React.Component {
     });
   };
   render() {
-    console.log(this.state.data);
-    
     return (
       <div>
         <PageHeader
@@ -107,7 +105,7 @@ class Details extends React.Component {
     );
   }
   componentWillMount() {
-    // localStorage.setItem('listdata',JSON.stringify(mydata));
+    localStorage.setItem('listdata',JSON.stringify(mydata));
     let reg = /<div id=\"t\d\">/;
     let idreg = /t\d/;
     let data = this.state.data;
