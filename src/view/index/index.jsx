@@ -42,18 +42,12 @@ class Index extends React.Component {
             loading:true
         })
         axios
-            .get('http://owiseman.com:33315/data.json', {
-            params: {
-                keywords: this.keywords,
-                page: pageNo,
-                size: 10
-            }
-        })
+            .get(`/querykeywords?keywords=${this.state.keywords}&page=${pageNo}&size=10`)
             .then((res) => {
-                let pageinfo = res.pop();
+                let pageinfo = res.data.pop();
                 this.setState({
                     pageinfo: pageinfo,
-                    list: res,
+                    list: res.data,
                     loading:false
                 })
                 console.log('res: ', res);
@@ -127,7 +121,7 @@ class Index extends React.Component {
                             total={this.state.pageinfo.pageTotal}
                             onChange={this.getdata}/></div>
                     </TabPane>
-                    <TabPane tab="知识图谱可视化" key="2">
+                    {/* <TabPane tab="知识图谱可视化" key="2">
                         <div className={styles.tipsbox}>
                             <div
                                 style={{
@@ -154,7 +148,7 @@ class Index extends React.Component {
                                 <span>诗人社交网络</span>
                             </div>
                         </div>
-                    </TabPane>
+                    </TabPane> */}
                 </Tabs>
                 <Footer/>
             </div>
