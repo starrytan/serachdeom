@@ -112,15 +112,17 @@ class Details extends React.Component {
     let idreg = /t\d/;
     let data = this.state.data;
     let imgarr = data.content.match(reg);
-    imgarr.map(item => {
-      data.content = data.content.replace(
-        item,
-        item + `<img class="lazyload" data="${data[item.match(idreg)]}" src="" />`
-      );
-    });
-    this.setState({
-      data:data
-    });
+    if(imgarr instanceof Array){
+      imgarr.map(item => {
+        data.content = data.content.replace(
+          item,
+          item + `<img class="lazyload" data="${data[item.match(idreg)]}" src="" />`
+        );
+      });
+      this.setState({
+        data:data
+      });
+    }
   }
   componentDidMount() {
     let domarr = document.getElementsByClassName("lazyload");
