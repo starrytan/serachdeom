@@ -6,6 +6,7 @@
 #root{
   max-width: 1170px;
   margin: 0 auto;
+  padding: 10px 20px;
 }
 html{
   height: auto !important;

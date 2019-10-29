@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './index.pcss'
 import {Tabs, Input, Pagination, Spin} from 'antd';
 import Footer from '../components/footer';
-import data from './data.json';
 import common from '../../static/jsx/common';
 import axios from 'axios';
 const {TabPane} = Tabs;
@@ -33,11 +32,6 @@ class Index extends React.Component {
     }
     getdata = (pageNo) => {
         console.log('pageNo: ', pageNo);
-        // let pageinfo = data.pop();
-        // this.setState({
-        //     pageinfo: pageinfo,
-        //     list: data
-        // })
         this.setState({
             loading:true
         })
@@ -62,12 +56,13 @@ class Index extends React.Component {
                 console.log('err: ', err);
             })
     }
-    jump = (id) => {
-        console.log('id: ', id);
+    jump = (item) => {
+        console.log('id: ', item);
+        localStorage.setItem('listdata',JSON.stringify(item));
         this
             .props
             .history
-            .push('/details/' + id)
+            .push('/details/' + item.id)
     }
     render() {
         console.log(this.state.list);
@@ -104,7 +99,7 @@ class Index extends React.Component {
                                                 <div
                                                     id={'box' + index}
                                                     onClick={() => {
-                                                    this.jump(item.id)
+                                                    this.jump(item)
                                                 }}
                                                     key={index}
                                                     style={{
