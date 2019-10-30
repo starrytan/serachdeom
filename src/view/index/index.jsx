@@ -23,6 +23,9 @@ class Index extends React.Component {
         }
     }
     search = (val) => {
+        this.setState({
+            keywords:val
+        })
         this.props.history.push('/index?keywords='+val);
         this.getdata(0,val)
         console.log('val: ', val);
@@ -47,21 +50,14 @@ class Index extends React.Component {
                     list: res.data,
                     loading:false
                 })
-                console.log('res: ', res);
+                // console.log('res: ', res);
             })
             .catch((err) => {
                 console.log('err: ', err);
             })
     }
-    handleChange = (e)=>{
-        e.persist()
-        console.log('val: ', e.target.value);
-        this.setState({
-            keywords:e.target.value
-        })
-    }
     jump = (item) => {
-        console.log('id: ', item);
+        // console.log('id: ', item);
         localStorage.setItem('listdata',JSON.stringify(item));
         this
             .props
@@ -76,8 +72,6 @@ class Index extends React.Component {
                 <Tabs defaultActiveKey="1" onChange={callback}>
                     <TabPane tab="知识图谱语义搜索" key="1">
                         <Search
-                            value={this.state.keywords}
-                            onChange={this.handleChange}
                             placeholder="请输入关键词"
                             enterButton="搜索"
                             size="large"
@@ -87,7 +81,7 @@ class Index extends React.Component {
                                  .example
                                 .map((item) => {
                                     return (
-                                        <span onClick={()=>{this.search(this.state.keywords)}} key={item}>{item}</span>
+                                        <a href='#' key={item}>{item}</a>
                                     )
                                 })
 }</div>

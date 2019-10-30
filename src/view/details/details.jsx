@@ -13,9 +13,9 @@ class Details extends React.Component {
       data:JSON.parse(localStorage.getItem('listdata'))
     };
   }
-  viewimg = () => {
+  viewimg = (item) => {
     this.setState({
-      imgurl: "http://p3.img.cctvpic.com/fmspic/2019/10/27/68190fc669804738adaa32f7ecee1c8c-250.jpg"
+      imgurl: item
     });
   };
   closebox = e => {
@@ -28,6 +28,8 @@ class Details extends React.Component {
     });
   };
   render() {
+    // console.log(this.state.data);
+    
     return (
       <div>
         <PageHeader
@@ -40,12 +42,16 @@ class Details extends React.Component {
         <div className={styles.title}>{this.state.data.title}</div>
         <div className={styles.main}>
           <div className={styles.box}>
-            <p className={styles.titlename}>作者：</p>
+           {/* <p className={styles.titlename}>作者：</p>
             <p>{this.state.data.author}</p>
             <p className={styles.titlename}>来源：</p>
-            <p>{this.state.data.source}</p>
-            <p className={styles.titlename}>说明：</p>
+            <p>{this.state.data.source}</p>*/}
+            <p className={styles.titlename}>标题：</p>
+            <p>{this.state.data.title}</p>
+            <p className={styles.titlename}>章节：</p>
             <p>{this.state.data.capter}</p>
+            <p className={styles.titlename}>小节</p>
+            <p>{this.state.data.section}</p>
             <p className={styles.titlename}>内容：</p>
             <div
               id="content"
@@ -83,7 +89,7 @@ class Details extends React.Component {
                 <div key={index} className={styles.infobox}>
                 <div
                   onClick={() => {
-                    this.viewimg();
+                    this.viewimg(item);
                   }}
                   className={styles.card}>
                   <img
@@ -105,7 +111,7 @@ class Details extends React.Component {
     );
   }
   componentWillMount() {
-    localStorage.setItem('listdata',JSON.stringify(mydata));
+    // localStorage.setItem('listdata',JSON.stringify(mydata));
     let reg = /<div id=\"t\d\">/;
     let idreg = /t\d/;
     let data = this.state.data;
