@@ -6,7 +6,7 @@ const footer = () => {
     }
     return (
         <div style={footercss}>
-            <p>©版权所有 四川大学华西临床医学院|华西医院病例研究室</p>
+            <p>©版权所有 四川大学华西临床医学院|华西医院病理研究室</p>
         </div>
     )
 }

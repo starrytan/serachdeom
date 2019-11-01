@@ -47,11 +47,11 @@ class Details extends React.Component {
             <p className={styles.titlename}>来源：</p>
             <p>{this.state.data.source}</p>*/}
             <p className={styles.titlename}>标题：</p>
-            <p>{this.state.data.title}</p>
+            <p><b>{this.state.data.title}</b></p>
             <p className={styles.titlename}>章节：</p>
-            <p>{this.state.data.capter}</p>
+            <p><b>{this.state.data.capter}</b></p>
             <p className={styles.titlename}>小节</p>
-            <p>{this.state.data.section}</p>
+            <p><b>{this.state.data.section}</b></p>
             <p className={styles.titlename}>内容：</p>
             <div
               id="content"
