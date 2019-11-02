@@ -35,15 +35,11 @@ class Details extends React.Component {
       if(target.nextSibling.style.maxHeight=='0px'||!target.nextSibling.style.maxHeight){
         target.lastChild.src=imgdown;
         console.log(target.lastChild);
-        
         target.nextSibling.style.maxHeight = '1000px'
       }else{
         target.lastChild.src=imgup;
         target.nextSibling.style.maxHeight = '0px'
       }
-      
-      console.log('标题');
-      
     }
   }
   render() {
