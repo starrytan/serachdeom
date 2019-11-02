@@ -54,6 +54,17 @@
     img{
         width: 100%
     }
+    b{
+        display: block;
+        cursor: pointer;
+        margin-bottom: 15px;
+    }
+    span{
+        display: block;
+        overflow: hidden;
+        max-height: 0px;
+        transition: max-height .5s;
+    }
 }
 .card{
     width: 100%;
@@ -81,4 +92,18 @@
   color: #fff;
   text-align: center;
   font-size: 20px;
+}
+.PageHeader{
+    padding:15px 0;
+    font-size:25px;
+    span{
+        cursor: pointer;
+        transition: color .2s;
+    }
+    span:hover{
+        color: #1088e9
+    }
+    i{
+        margin-right: 10px;
+    }
 }
