@@ -30,12 +30,13 @@ class Details extends React.Component {
   };
   flexible = (e)=>{
     e.persist();
-    let target = e.target
+    let target = e.target.parentNode
     if(target.tagName=='B'){
       if(target.nextSibling.style.maxHeight=='0px'||!target.nextSibling.style.maxHeight){
         target.lastChild.src=imgdown;
-        console.log(target.lastChild);
-        target.nextSibling.style.maxHeight = '1000px'
+        let myheight = target.nextSibling.getAttribute('myheight');
+        target.nextSibling.style.maxHeight =myheight+'px'
+
       }else{
         target.lastChild.src=imgup;
         target.nextSibling.style.maxHeight = '0px'
@@ -100,6 +101,7 @@ class Details extends React.Component {
     let idreg = /t\d/;
     let data = this.state.data;
     data.content=data.content.replace(/<\/b>/g,'<img style="width:20px;margin-left:20px" src="'+imgup+'"/></b>');
+    data.content=data.content.replace(/<span/g,'<span class="mainbox"');
     let imgarr = data.content.match(reg);
     if(imgarr instanceof Array){
       imgarr.map(item => {
@@ -114,6 +116,11 @@ class Details extends React.Component {
     }
   }
   componentDidMount() {
+    let mainbox = document.getElementsByClassName('mainbox');
+    for(let box of mainbox){
+      box.setAttribute('myheight',box.clientHeight+20);
+      // box.style.maxHeight='0px'
+    }
     let domarr = document.getElementsByClassName("lazyload");
     for (let dom of domarr) {
       common.lazyload(dom);

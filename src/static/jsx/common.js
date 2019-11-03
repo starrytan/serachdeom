@@ -25,12 +25,13 @@ module.exports={
         if(url===''){
             return {};
         }
-        console.log('url: ', url);
         let obj = {};
-        url.split('?')[1].split('&').map((item)=>{
-           let o = item.split('=');
-           obj[o[0]] = o[1];
-        })
+        if(url.includes('?')&&url.split('?').length>1){
+            url.split('?')[1].split('&').map((item)=>{
+                let o = item.split('=');
+                obj[o[0]] = o[1];
+             })
+        }
         return obj
     }
 }

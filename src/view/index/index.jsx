@@ -149,7 +149,7 @@ class Index extends React.Component {
                         </div>
                         <div className={styles.pagination}><Pagination
                             showQuickJumper
-                            defaultCurrent={0}
+                            defaultCurrrent={0}
                             total={this.state.pageinfo.pageTotal}
                             onChange={this.getdata}/></div>
                     </TabPane>
@@ -163,11 +163,12 @@ class Index extends React.Component {
     }
     componentDidMount() {
         let keywords = decodeURI(common.geturldata(this.props.location.search).keywords);
-        if(keywords!==''){
+        console.log('keywords: ', typeof keywords);
+        if(typeof keywords =='string'){
             this.setState({
                 keywords: keywords
             },()=>{
-                this.getdata(1)
+                this.getdata(0)
             })
         }
     }
