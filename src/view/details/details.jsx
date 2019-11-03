@@ -61,12 +61,13 @@ class Details extends React.Component {
            {/* <p className={styles.titlename}>作者：</p>
             <p>{this.state.data.author}</p>
             <p className={styles.titlename}>来源：</p>
-            <p>{this.state.data.source}</p>*/}
+            <p>{this.state.data.source}</p>
             <p className={styles.titlename}>标题：</p>
             <p><b>{this.state.data.title}</b></p>
             <p className={styles.titlename}>章节：</p>
-            <p><b>{this.state.data.capter}</b></p>
-            <p className={styles.titlename}>简介：</p>
+            <p><b>{this.state.data.capter}</b></p>*/}
+            <p className={styles.titlename}><b>简介：</b></p>
+            <p>{this.state.data.section}</p>
             <div
               onClick={this.flexible}
               id="content"
@@ -75,8 +76,8 @@ class Details extends React.Component {
               dangerouslySetInnerHTML={{
                 __html: this.state.data.content
               }}></div>
-            <p className={styles.titlename}>小节：</p>
-            <p><b>{this.state.data.section}</b></p>
+            {/*<p className={styles.titlename}>小节：</p>*/}
+            
           </div>
           <div className={styles.rightbox}>
             {this.state.data.urls?this.state.data.urls.map((item,index)=>{
