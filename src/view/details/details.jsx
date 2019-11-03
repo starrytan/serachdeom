@@ -31,7 +31,12 @@ class Details extends React.Component {
   };
   flexible = (e)=>{
     e.persist();
-    let target = e.target.parentNode
+    let target;
+    if(e.target.tagName=='B'){
+      target=e.target;
+    }else if(e.target.parentNode=='B'){
+      target = e.target.parentNode
+    }
     if(target.tagName=='B'){
       if(target.nextSibling.style.maxHeight=='0px'||!target.nextSibling.style.maxHeight){
         target.lastChild.style.transform = 'rotate(0deg)'
@@ -63,7 +68,7 @@ class Details extends React.Component {
             <div
               onClick={this.flexible}
               id="content"
-              style={this.state.visibility?{visibility:'hidden'}:{}}
+              style={this.state.visibility?{opacity:'0'}:{opacity:'1'}}
               className={styles.content}
               dangerouslySetInnerHTML={{
                 __html: this.state.data.content
@@ -102,7 +107,7 @@ class Details extends React.Component {
     let reg = /<div id=\"t\d\">/;
     let idreg = /t\d/;
     let data = this.state.data;
-    data.content=data.content.replace(/<\/b>/g,'<img style="width:15px;transform:rotate(-90deg);transition:transform .3s" src="'+imgup+'"/></b>');
+    data.content=data.content.replace(/<\/b>/g,'<img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:150px" src="'+imgup+'"/></b>');
     data.content=data.content.replace(/<span>/g,'<span class="mainbox">');
     data.content=data.content.replace(/<span class="sub"/g,'<span class="mainbox sub"');
     let imgarr = data.content.match(reg);
