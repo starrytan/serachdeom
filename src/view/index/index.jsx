@@ -130,12 +130,12 @@ class Index extends React.Component {
                                                     animationDelay: 0.05 *index + 's'
                                                 }}
                                                     className={styles.box}>
-                                                    <p className={styles.title}>{item.section}</p>
-                                                    <p
+                                                    <p className={styles.title}>{item.title}</p>
+                                                    {/*<p
                                                         className={styles.content}
                                                         dangerouslySetInnerHTML={{
-                                                        __html: item.content
-                                                    }}></p>
+                                                        __html: item.title
+                                                    }}></p>*/}
                                                     <div className={styles.imglist}>
                                                     {item.urls&&index===0?item.urls.slice(0,4).map((img,imgdex)=>{
                                                         return(
