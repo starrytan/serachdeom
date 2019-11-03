@@ -32,12 +32,14 @@ class Details extends React.Component {
   flexible = (e)=>{
     e.persist();
     let target;
+    console.log(e.target.tagName);
     if(e.target.tagName=='B'){
       target=e.target;
     }else if(e.target.parentNode=='B'){
       target = e.target.parentNode
+    }else{
+      return
     }
-    if(target.tagName=='B'){
       if(target.nextSibling.style.maxHeight=='0px'||!target.nextSibling.style.maxHeight){
         target.lastChild.style.transform = 'rotate(0deg)'
         let myheight = target.nextSibling.getAttribute('myheight');
@@ -47,7 +49,7 @@ class Details extends React.Component {
         target.nextSibling.style.maxHeight = '0px';
         target.lastChild.style.transform = 'rotate(-90deg)'
       }
-    }
+    
   }
   render() {
     return (
