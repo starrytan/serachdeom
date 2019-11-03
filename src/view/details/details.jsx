@@ -41,13 +41,13 @@ class Details extends React.Component {
       return
     }
       if(target.nextSibling.style.maxHeight=='0px'||!target.nextSibling.style.maxHeight){
-        target.lastChild.style.transform = 'rotate(0deg)'
+        target.firstChild.style.transform = 'rotate(0deg)'
         let myheight = target.nextSibling.getAttribute('myheight');
         target.nextSibling.style.maxHeight =myheight+'px'
 
       }else{
         target.nextSibling.style.maxHeight = '0px';
-        target.lastChild.style.transform = 'rotate(-90deg)'
+        target.firstChild.style.transform = 'rotate(-90deg)'
       }
   }
   render() {
@@ -108,7 +108,8 @@ class Details extends React.Component {
     let reg = /<div id=\"t\d\">/;
     let idreg = /t\d/;
     let data = this.state.data;
-    data.content=data.content.replace(/<\/b>/g,'<img style="width:10px;transform:rotate(-90deg);transition:transform .3s" src="'+imgup+'"/></b>');
+    data.content=data.content.replace(/<b class="bb1">/g,'<b class="bb1"><img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:10px" src="'+imgup+'"/>');
+    data.content=data.content.replace(/<b class="bb2">/g,'<b class="bb2"><img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:10px" src="'+imgup+'"/>');
     data.content=data.content.replace(/<span>/g,'<span class="mainbox">');
     data.content=data.content.replace(/<span class="sub"/g,'<span class="mainbox sub"');
     let imgarr = data.content.match(reg);

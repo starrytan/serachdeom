@@ -62,7 +62,7 @@ class Index extends React.Component {
         this
             .props
             .history
-            .push('/details/' + item.id)
+            .push('/details?id=' + item.id)
     }
     handchange = (e)=>{
         e.persist();
