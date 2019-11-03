@@ -32,10 +32,10 @@ class Details extends React.Component {
   flexible = (e)=>{
     e.persist();
     let target;
-    console.log(e.target.tagName);
+    console.log(e.target.tagName,);
     if(e.target.tagName=='B'){
       target=e.target;
-    }else if(e.target.parentNode=='B'){
+    }else if(e.target.parentNode.tagName=='B'){
       target = e.target.parentNode
     }else{
       return
@@ -49,7 +49,6 @@ class Details extends React.Component {
         target.nextSibling.style.maxHeight = '0px';
         target.lastChild.style.transform = 'rotate(-90deg)'
       }
-    
   }
   render() {
     return (
@@ -77,7 +76,6 @@ class Details extends React.Component {
                 __html: this.state.data.content
               }}></div>
             {/*<p className={styles.titlename}>小节：</p>*/}
-            
           </div>
           <div className={styles.rightbox}>
             {this.state.data.urls?this.state.data.urls.map((item,index)=>{
@@ -110,7 +108,7 @@ class Details extends React.Component {
     let reg = /<div id=\"t\d\">/;
     let idreg = /t\d/;
     let data = this.state.data;
-    data.content=data.content.replace(/<\/b>/g,'<img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:150px" src="'+imgup+'"/></b>');
+    data.content=data.content.replace(/<\/b>/g,'<img style="width:10px;transform:rotate(-90deg);transition:transform .3s" src="'+imgup+'"/></b>');
     data.content=data.content.replace(/<span>/g,'<span class="mainbox">');
     data.content=data.content.replace(/<span class="sub"/g,'<span class="mainbox sub"');
     let imgarr = data.content.match(reg);

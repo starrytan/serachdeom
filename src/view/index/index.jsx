@@ -52,7 +52,6 @@ class Index extends React.Component {
                     list: res.data,
                     loading:false
                 })
-                // console.log('res: ', res);
             })
             .catch((err) => {
                 console.log('err: ', err);
