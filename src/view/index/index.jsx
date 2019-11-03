@@ -162,8 +162,7 @@ class Index extends React.Component {
     componentWillMount() {
     }
     componentDidMount() {
-        let keywords = decodeURI(common.geturldata(this.props.location.search).keywords);
-        console.log('keywords: ', typeof keywords);
+        let keywords = common.geturldata(this.props.location.search).keywords;
         if(typeof keywords =='string'){
             this.setState({
                 keywords: keywords
@@ -172,6 +171,5 @@ class Index extends React.Component {
             })
         }
     }
-
 }
 export default Index;

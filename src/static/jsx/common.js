@@ -29,7 +29,7 @@ module.exports={
         if(url.includes('?')&&url.split('?').length>1){
             url.split('?')[1].split('&').map((item)=>{
                 let o = item.split('=');
-                obj[o[0]] = o[1];
+                obj[o[0]] = decodeURI(o[1]);
              })
         }
         return obj
