@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../../static/css/components.pcss';
+import WSIBox from './wsibox';
 const ImgBox = ({imgurl,closebox})=>{
     class Imgbox extends React.Component{
         constructor(props){
@@ -22,7 +23,8 @@ const ImgBox = ({imgurl,closebox})=>{
             return(
                 <div onClick={closebox} className={styles.masking}>
                     <div className={styles.mainbox}>
-                        {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <div onClick={this.canvasck} className={styles.canvas}>canvas</div>}
+                        {/*{this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <div onClick={this.canvasck} className={styles.canvas}>canvas</div>}*/}
+                        {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <WSIBox onClick={this.canvasck} className={styles.canvas} />}
                     <div className={styles.btnbox}>
                         <p>关闭</p>
                     </div>
