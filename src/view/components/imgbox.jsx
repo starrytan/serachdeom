@@ -15,11 +15,14 @@ const ImgBox = ({imgurl,closebox})=>{
                 viewtype:this.state.viewtype===1?2:1
             })
         }
+        canvasck = (e)=>{
+            e.stopPropagation();
+        }
         render(){
             return(
                 <div onClick={closebox} className={styles.masking}>
                     <div className={styles.mainbox}>
-                        {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img>:<div className={styles.canvas}>canvas</div>}
+                        {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <div onClick={this.canvasck} className={styles.canvas}>canvas</div>}
                     <div className={styles.btnbox}>
                         <p>关闭</p>
                     </div>

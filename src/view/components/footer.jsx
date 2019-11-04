@@ -4,8 +4,9 @@ const footer = () => {
         textAlign: 'center',
         position: 'fixed',
         bottom:'0px',
-        width:'100%',
-        background: '#fff'
+        background: '#fff',
+        left: '50%',
+        transform: 'translateX(-50%)'
     }
     return (
         <div style={{ height: '100px', position:'relative'}}>
