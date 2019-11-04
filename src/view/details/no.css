@@ -1,7 +1,15 @@
-.bb2,.sub{
+.bb2{
     padding-left: 18px;
     font-size: 14px !important;
 }
+ .sub {
+    padding-left: 19px;
+    font-size: 14px !important;
+} 
 .mainbox{
     font-size: 14px;
+}
+
+span > p {
+    padding-left: 19px;
 }

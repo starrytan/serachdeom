@@ -21,7 +21,7 @@ const ImgBox = ({imgurl,closebox})=>{
                     <div className={styles.mainbox}>
                     {this.state.viewtype==1?<img src={imgurl}></img>:<div className={styles.canvas}>canvas</div>}
                     <div className={styles.btnbox}>
-                        <p onClick={this.switch}>切换</p>
+                        <p onClick={this.switch}>数字切片</p>
                         <p>关闭</p>
                     </div>
                     </div>

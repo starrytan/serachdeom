@@ -38,7 +38,7 @@ class Index extends React.Component {
             loading:true
         });
         axios
-            .get(`http://2749q65j10.qicp.vip/querykeywords`,{
+            .get(`http://localhost:8088/querykeywords`,{
                 params:{
                     keywords:this.state.keywords,
                     page:pageNo,
