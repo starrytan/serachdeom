@@ -5,7 +5,7 @@ import '../../static/css/viewer-p';
 import $ from 'jquery'
 
 
-const SERVER_PROPERTIES = { wsiurl: 'http://2749q65j10.qicp.vip/' };
+const SERVER_PROPERTIES = { wsiurl: 'http://2749q65j10.qicp.vip/myserv' };
 
 
 
