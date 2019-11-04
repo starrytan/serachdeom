@@ -3,7 +3,6 @@ import styles from "./details.pcss";
 import Footer from "../components/footer";
 import Imgbox from "../components/imgbox";
 import common from "../../static//jsx/common";
-import mydata from "./data.json";
 import {PageHeader, BackTop} from "antd";
 class Details extends React.Component {
   constructor(props) {
@@ -28,8 +27,6 @@ class Details extends React.Component {
     });
   };
   render() {
-    // console.log(this.state.data);
-    
     return (
       <div>
         <PageHeader
