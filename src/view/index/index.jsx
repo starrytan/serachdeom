@@ -4,6 +4,7 @@ import {Tabs, Input, Pagination, Spin} from 'antd';
 import Footer from '../components/footer';
 import common from '../../static/jsx/common';
 import axios from 'axios';
+import Imgbox from '../components/imgbox';
 const {TabPane} = Tabs;
 const {Search} = Input;
 function callback(key) {
@@ -14,27 +15,28 @@ class Index extends React.Component {
         super(props)
         this.state = {
             example: [
-//                '李白', '杜甫', '白居易', '苏轼', '于谦'
+//            '李白', '杜甫', '白居易', '苏轼', '于谦'
             ],
             list: [],
             loading: false,
             pageinfo:{},
-            keywords:'title888'
+            keywords:'',
+            imgurl:''
         }
     }
     search = (val) => {
         this.setState({
             keywords:val
-        })
-        this.props.history.push('/index?keywords='+val);
-        this.getdata(0,val)
-        console.log('val: ', val);
+        },()=>{
+            this.getdata(0);
+        });
+        window.history.replaceState({},'','?keywords='+val);
     }
     getdata = (pageNo) => {
         console.log('pageNo: ', pageNo);
         this.setState({
             loading:true
-        })
+        });
         axios
             .get(`http://localhost:8088/querykeywords`,{
                 params:{
@@ -50,19 +52,39 @@ class Index extends React.Component {
                     list: res.data,
                     loading:false
                 })
-                // console.log('res: ', res);
             })
             .catch((err) => {
                 console.log('err: ', err);
             })
     }
     jump = (item) => {
-        // console.log('id: ', item);
         localStorage.setItem('listdata',JSON.stringify(item));
         this
             .props
             .history
-            .push('/details/' + item.id)
+            .push('/details?id=' + item.id)
+    }
+    handchange = (e)=>{
+        e.persist();
+        this.setState({
+            keywords:e.target.value
+        })
+    }
+    viewimg = (imgurl,e)=>{
+        console.log('e: ', e);
+        e.stopPropagation()
+        this.setState({
+            imgurl:imgurl
+        })
+    }
+    closebox = (e)=>{
+        e.persist();
+        if (e.target.tagName == "IMG") {
+            return;
+          }
+        this.setState({
+            imgurl:''
+        })     
     }
     render() {
         console.log(this.state.list);
@@ -75,16 +97,17 @@ class Index extends React.Component {
                             placeholder="请输入关键词"
                             enterButton="搜索"
                             size="large"
+                            value={this.state.keywords}
+                            onChange={this.handchange}
                             onSearch={this.search}/>
-                        <div className={styles.example}>搜索示例： {this
+                        <div className={styles.example}>搜索结果： {this
                                 .state
                                  .example
                                 .map((item) => {
                                     return (
                                         <a href='#' key={item}>{item}</a>
                                     )
-                                })
-}</div>
+                                })}</div>
                         <hr className={styles.hr}></hr>
                         <div className={styles.listbox}>
                             {this.state.loading
@@ -106,62 +129,46 @@ class Index extends React.Component {
                                                     animationDelay: 0.05 *index + 's'
                                                 }}
                                                     className={styles.box}>
-                                                    <p className={styles.title}>{item.section}</p>
-                                                    <p
+                                                    <p className={styles.title}>{item.title}</p>
+                                                    {/*<p
                                                         className={styles.content}
                                                         dangerouslySetInnerHTML={{
-                                                        __html: item.content
-                                                    }}></p>
+                                                        __html: item.title
+                                                    }}></p>*/}
+                                                    <div className={styles.imglist}>
+                                                    {item.urls&&index===0?item.urls.slice(0,4).map((img,imgdex)=>{
+                                                        return(
+                                                            <img onClick={(e)=>{this.viewimg(img,e)}} key={imgdex} src={img} />
+                                                        )
+                                                    }):''}
+                                                    </div>
                                                 </div>
                                             )
                                         })}
                         </div>
                         <div className={styles.pagination}><Pagination
                             showQuickJumper
-                            defaultCurrent={0}
+                            defaultCurrrent={0}
                             total={this.state.pageinfo.pageTotal}
                             onChange={this.getdata}/></div>
                     </TabPane>
-                {/*  <TabPane tab="知识图谱可视化" key="2">
-                        <div className={styles.tipsbox}>
-                            <div
-                                style={{
-                                backgroundColor: '#337ab7'
-                            }}>
-                                <span>诗人社交网络</span>
-                            </div>
-                            <div
-                                style={{
-                                backgroundColor: '#5bc0de'
-                            }}>
-                                <span>诗人迁徙游历</span>
-                            </div>
-                            <div
-                                style={{
-                                backgroundColor: '#5cb85c'
-                            }}>
-                                <span>作品热点地图</span>
-                            </div>
-                            <div
-                                style={{
-                                backgroundColor: '#d9534f'
-                            }}>
-                                <span>诗人社交网络</span>
-                            </div>
-                        </div>
-                    </TabPane>*/}
                 </Tabs>
                 <Footer/>
+                {this.state.imgurl?<Imgbox closebox={this.closebox} imgurl={this.state.imgurl}/>:''}
             </div>
         )
     }
-    componentWillMount() {}
-    componentDidMount() {
-        this.setState({
-            keywords: common.geturldata(this.props.location.search).keywords
-        })
-        this.getdata(1)
+    componentWillMount() {
     }
-
+    componentDidMount() {
+        let keywords = common.geturldata(this.props.location.search).keywords;
+        if(typeof keywords =='string'){
+            this.setState({
+                keywords: keywords
+            },()=>{
+                this.getdata(0)
+            })
+        }
+    }
 }
 export default Index;
