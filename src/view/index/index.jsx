@@ -38,7 +38,7 @@ class Index extends React.Component {
             loading:true
         });
         axios
-            .get(`http://localhost:8088/querykeywords`,{
+            .get(`http://2749q65j10.qicp.vip/querykeywords`,{
                 params:{
                     keywords:this.state.keywords,
                     page:pageNo,
@@ -136,7 +136,7 @@ class Index extends React.Component {
                                                         __html: item.title
                                                     }}></p>*/}
                                                     <div className={styles.imglist}>
-                                                    {item.urls&&index===0?item.urls.slice(0,4).map((img,imgdex)=>{
+                                                    {item.urls&&index===0?item.urls.slice(0,2).map((img,imgdex)=>{
                                                         return(
                                                             <img onClick={(e)=>{this.viewimg(img,e)}} key={imgdex} src={img} />
                                                         )

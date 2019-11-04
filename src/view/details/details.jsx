@@ -78,7 +78,7 @@ class Details extends React.Component {
             {/*<p className={styles.titlename}>小节：</p>*/}
           </div>
           <div className={styles.rightbox}>
-            {this.state.data.urls?this.state.data.urls.map((item,index)=>{
+            {this.state.data.urls ? this.state.data.urls.slice(0, 2).map((item,index)=>{
               return(
                 <div key={index} className={styles.infobox}>
                 <div
@@ -97,7 +97,7 @@ class Details extends React.Component {
           </div>
         </div>
         <Footer />
-        {this.state.imgurl ? <Imgbox closebox={this.closebox} imgurl={this.state.imgurl} /> : ""}
+        {this.state.imgurl? <Imgbox closebox={this.closebox} imgurl={this.state.imgurl} /> : ""}
         <BackTop>
           <div className={styles.backtop}>UP</div>
         </BackTop>
