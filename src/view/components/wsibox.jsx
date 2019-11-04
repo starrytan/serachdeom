@@ -1,11 +1,11 @@
 import React from 'react';
 import OpenSeadragon from 'openseadragon';
-import '../../static/css/viewer-l';
-import '../../static/css/viewer-p';
+import '../../static/css/viewer-l.pcss';
+import '../../static/css/viewer-p.pcss';
 import $ from 'jquery'
 
 
-const SERVER_PROPERTIES = { wsiurl: 'http://2749q65j10.qicp.vip/myserv' };
+const SERVER_PROPERTIES ={openslide: { url: 'http://2749q65j10.qicp.vip/myserv' }};
 
 
 
@@ -57,7 +57,7 @@ const WSIBox = (wsiurl) => {
             this.sourceProperties = "";
             this.sourceCase = "";
             this.snapshotDiv = "snapshot";
-            this.viewer = new OpenSeadragon({});
+            this.viewer =  OpenSeadragon;
             this.state = {
                 ourGestureSettingsMouse: ourGestureSettingsMouse,
                 ourGestureSettingsTouch: ourGestureSettingsTouch,
@@ -68,7 +68,8 @@ const WSIBox = (wsiurl) => {
         componentDidMount() {
             this.setupControls();
             let caseName = "1";
-			let props = SERVER_PROPERTIES;
+            let props = SERVER_PROPERTIES;
+            // test
 			var images = [
             // { type: "openslide", name: "APERIO_7", path: "KW16-000001_APERIO_7_U00000X.svs", tag: "H&E" },
 			{ type: "openslide", name: "1", path: "1.tiff" }
