@@ -19,9 +19,8 @@ const ImgBox = ({imgurl,closebox})=>{
             return(
                 <div onClick={closebox} className={styles.masking}>
                     <div className={styles.mainbox}>
-                    {this.state.viewtype==1?<img src={imgurl}></img>:<div className={styles.canvas}>canvas</div>}
+                        {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img>:<div className={styles.canvas}>canvas</div>}
                     <div className={styles.btnbox}>
-                        <p onClick={this.switch}>数字切片</p>
                         <p>关闭</p>
                     </div>
                     </div>

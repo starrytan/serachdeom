@@ -2,7 +2,9 @@ import React from 'react';
 const footer = () => {
     let footercss = {
         textAlign: 'center',
-        marginTop: '50px'
+        marginTop: '50px',
+        position: 'fixed',
+        bottom:'0px'
     }
     return (
         <div style={footercss}>
