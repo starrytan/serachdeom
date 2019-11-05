@@ -206,7 +206,8 @@ function loadOpenslideImage(prop, image) {
         };
 
         // add image to the slider
-        addImage(image, source);
+        // addImage(image, source);
+        openViewer(source);
     });
 }
 
@@ -229,7 +230,7 @@ function addImage(image, source) {
     }
     // add image thumbnail to an appropriate tag
     let text = "<div class=\"thumbnail-div\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
-        "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" +
+        "<a href=\"javascript:;\" class=\"thumbnail-a\" id=\"IMG" +
         image.n + "\"><img src=\"" +
         image.thumbnail + "\" class=\"thumbnail-img\"/>" + "<div class=\"thumbnail-caption\">" + image.name + "</div></a></div>";
 
@@ -270,8 +271,10 @@ function openViewer(source) {
 
     if ((repenViewer) || (!viewer)) {
         let showControls = (source.maxLevel > 1);
+        // $('#thumbnail-div').css('z-index',"-2");
         $("#view").text("");
         $("#view").css("background-image", "none");
+        $("#view").css("height", "763px");
         viewer = OpenSeadragon({
             id: "view",
             autoHideControls: false,
@@ -279,7 +282,7 @@ function openViewer(source) {
             navigatorSizeRatio: 0.2,
             showNavigator: showControls,
             showNavigationControl: showControls,
-            // preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
+            preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
             gestureSettingsMouse: ourGestureSettingsMouse,
             gestureSettingsTouch: ourGestureSettingsTouch,
             gestureSettingsPen: ourGestureSettingsPen,
@@ -292,7 +295,7 @@ function openViewer(source) {
         });
         viewer.open(source);
         currentImage = source;
-        console.log(viewer);
+        // console.log(viewer);
         if (source.maxLevel == 1) {
             $("#snapshot").hide();
             viewer.MouseNavEnable=false;
@@ -334,19 +337,9 @@ const WSIBox = (wsiurl) => {
             };
         }
 
-        setupControls() {
-            $("#snapshot").hide();
-            $("#snapshot")
-                .mouseover(function () {
-                    $(this).attr("src", "../../static/images/snapshot_hover.png");
-                })
-                .mouseout(function () {
-                    $(this).attr("src", "../../static/images/snapshot_rest.png");
-                });
-        }
 
         componentDidMount() {
-            this.setupControls();
+            setupControls();
             let caseName = "1";
             let props = SERVER_PROPERTIES;
             // test
@@ -355,8 +348,9 @@ const WSIBox = (wsiurl) => {
                 { type: "openslide", name: "1.tiff", path: "1.tiff" }
                 // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
-            this.loadImages(props, images, caseName);
-            document.title = "View: " + caseName;
+             this.loadImages(props, images, caseName);
+            // loadOpenslideImage(props,images)
+            // document.title = "View: " + caseName;
         }
 
         render() {
@@ -412,7 +406,7 @@ const WSIBox = (wsiurl) => {
             this.state.sourceImages.sort((a, b) => { return ((a.name < b.name) ? -1 : 1) });
 
             for (let i = 0; i < this.state.sourceImages.length; i++) {
-                console.log(this.state.sourceImages[i]);
+                // console.log(this.state.sourceImages[i]);
 
                 let imageDone = false;
 
