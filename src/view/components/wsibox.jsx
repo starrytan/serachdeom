@@ -5,13 +5,25 @@ import '../../static/css/viewer-p.pcss';
 import $ from 'jquery';
 
 
-const SERVER_PROPERTIES ={openslide: { url: 'http://2749q65j10.qicp.vip/myserv' }};
+const SERVER_PROPERTIES = { openslide: { url: 'http://2749q65j10.qicp.vip/myserv' } };
 
 
 
 const OPENSLIDE_INFO_REQUEST = "?action=info&path=";
 const OPENSLIDE_THUMBNAIL_REQUEST = "?action=image&path=";
 const OPENSLIDE_REGION_REQUEST = "?action=region&path=";
+
+var viewer;
+
+// save list of images and properties
+var sourceImages;
+var sourceProperties;
+var sourceCase;
+
+//Save reference to open slide image
+var currentImage;
+
+var snapshotDiv = "snapshot";
 
 var ourGestureSettingsMouse = {
     scrollToZoom: true,
@@ -46,22 +58,117 @@ var ourGestureSettingsPen = {
     pinchRotate: false
 };
 
+function addImage(image, source) {
+    // add image info to source
+    source.info = image;
+
+    // find tags
+    let tag = "images";
+    if ("tag" in image) {
+        tag = image.tag.replace(/[^a-zA-Z0-9]/g, '');
+    }
+    // check if this tag is new, add if so
+    if ($("#" + tag).length == 0) {
+        if (image.type == "snapshot") {
+            $("#images").append("<div id=\"" + tag + "\" class=\"tag\">" + image.tag + "</div>");
+        } else {
+            $("#image-container").append("<div id=\"" + tag + "\" class=\"tag\">" + image.tag + "</div>");
+        }
+    }
+    // add image thumbnail to an appropriate tag
+    let text = "<div class=\"thumbnail-div\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
+        "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" +
+        image.n + "\"><img src=\"" +
+        image.thumbnail + "\" class=\"thumbnail-img\"/>" + "<div class=\"thumbnail-caption\">" + image.name + "</div></a></div>";
+
+    // do something else for snapshot
+    if (image.type == "snapshot") {
+        text = "<div class=\"snapshot-snapshot\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
+            "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" + image.n + "\">" + image.name + "</a></div>";
+    }
+
+    $("#" + tag).append(text);
+    $("#IMG" + image.n).click(function () {
+        $(".thumbnail-div").css("border-color", "#000");
+        $("#THUMB" + image.n).css("border-color", "#00F");
+        openViewer(source);
+    });
+}
+
+function openViewer(source) {
+    let repenViewer = false;
+
+    if ((typeof currentImage !== undefined
+        || typeof currentImage !== 'undefined') && (currentImage != null)) {
+        if ((typeof viewer !== 'undefined' || typeof viewer !== undefined)
+            && (viewer != null) && (viewer.isOpen())) {
+            if (source.imageURL == currentImage.imageURL) {
+                viewer.viewport.goHome(true);
+                return;
+            }
+            else {
+                if (((this.state.currentImage.maxLevel == 1) && (source.maxLevel > 1))
+                    || ((this.state.currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
+
+                    repenViewer = true;
+                }
+            }
+        }
+    }
+
+    if ((repenViewer) || (!viewer)) {
+        let showControls = (source.maxLevel > 1);
+        $("#view").text("");
+        $("#view").css("background-image", "none");
+        viewer = OpenSeadragon({
+            id: "view",
+            autoHideControls: false,
+            visibilityRatio: 0.75,
+            navigatorSizeRatio: 0.2,
+            showNavigator: showControls,
+            showNavigationControl: showControls,
+            preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
+            gestureSettingsMouse: ourGestureSettingsMouse,
+            gestureSettingsTouch: ourGestureSettingsTouch,
+            gestureSettingsPen: ourGestureSettingsPen,
+            gestureSettingsUnknown: ourGestureSettingsMouse,
+            crossOriginPolicy: 'anonymous'
+        });
+        viewer.addHandler("open-failed", () => {
+            console.log("unable to open slide viewer;");
+            alert("unable to open slide viewer");
+        });
+        viewer.open(source);
+        currentImage = source;
+        console.log(viewer);
+        // if (source.maxLevel == 1) {
+        //     $("#snapshot").hide();
+        //     this.viewer.setMouseNavEnable(false);
+        // } else {
+        //     $("#snapshot").show();
+        //     this.viewer.setMouseNavEnable(true);        }
+
+    }
+
+
+}
+
 const WSIBox = (wsiurl) => {
     class WSIBox extends React.Component {
 
 
         constructor(props) {
-         super(props)
+            super(props)
             this.state = {
                 ourGestureSettingsMouse: ourGestureSettingsMouse,
                 ourGestureSettingsTouch: ourGestureSettingsTouch,
                 ourGestureSettingsPen: ourGestureSettingsPen,
                 currentImage: null,
-                sourceImages : [],
-                sourceProperties : "",
-                sourceCase : "",
+                sourceImages: [],
+                sourceProperties: "",
+                sourceCase: "",
                 snapshotDiv: "snapshot",
-                viewer :  OpenSeadragon,
+                viewer: OpenSeadragon,
             };
         }
 
@@ -70,10 +177,10 @@ const WSIBox = (wsiurl) => {
             let caseName = "1";
             let props = SERVER_PROPERTIES;
             // test
-			var images = [
-            // { type: "openslide", name: "APERIO_7", path: "KW16-000001_APERIO_7_U00000X.svs", tag: "H&E" },
-			{ type: "openslide", name: "tiff", path: "1.tiff" }
-			// { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
+            var images = [
+                // { type: "openslide", name: "APERIO_7", path: "KW16-000001_APERIO_7_U00000X.svs", tag: "H&E" },
+                { type: "openslide", name: "tiff", path: "1.tiff" }
+                // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
             this.loadImages(props, images, caseName);
         }
@@ -90,64 +197,7 @@ const WSIBox = (wsiurl) => {
             </div>);
         }
 
-        openViewer(source) {
-            let repenViewer = false;
 
-            if ((typeof this.state.currentImage !== undefined
-                || typeof this.state.currentImage !== 'undefined') && (this.state.currentImage != null)) {
-                if ((typeof this.state.viewer !== 'undefined' || typeof this.state.viewer !== undefined)
-                    && (this.state.viewer != null) && (this.state.viewer.isOpen())) {
-                    if (source.imageURL == this.state.currentImage.imageURL) {
-                        this.viewer.viewport.goHome(true);
-                        return;
-                    }
-                    else {
-                        if (((this.state.currentImage.maxLevel == 1) && (source.maxLevel > 1))
-                            || ((this.state.currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
-
-                            repenViewer = true;
-                        }
-                    }
-                }
-            }
-
-            if ((repenViewer) || (!this.viwer)) {
-                let showControls = (source.maxLevel > 1);
-                $("#view").text("");
-                $("#view").css("background-image", "none");
-                this.state.viewer = OpenSeadragon({
-                    id: "view",
-                    autoHideControls: false,
-                    visibilityRatio: 0.75,
-                    navigatorSizeRatio: 0.2,
-                    showNavigator: showControls,
-                    showNavigationControl: showControls,
-                    //preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
-                    gestureSettingsMouse: ourGestureSettingsMouse,
-                    gestureSettingsTouch: ourGestureSettingsTouch,
-                    gestureSettingsPen: ourGestureSettingsPen,
-                    gestureSettingsUnknown: ourGestureSettingsMouse,
-                    crossOriginPolicy: 'anonymous'
-                });
-                this.state.viewer.addHandler("open-failed", () => {
-                    console.log("unable to open slide viewer;");
-                    alert("unable to open slide viewer");
-                });
-                this.state.viewer.open(source);
-                this.state.currentImage = source;
-
-                if (source.maxLevel == 1) {
-                    $("#snapshot").hide();
-                    this.state.viewer.setMouseNavEnable(false);
-                } else {
-                    $("#snapshot").show();
-                    this.state.viewer.setMouseNavEnable(true);
-                }
-
-            }
-
-
-        }
 
         // setupControls() {
         //     $("#snapshot").hide();
@@ -162,15 +212,15 @@ const WSIBox = (wsiurl) => {
 
         loadImages(props, images, name) {
             // console.log("loadimage");
-                // let newState = this.state;
-                this.state.sourceImages = images;
-                this.state.sourceProperties = props;
-                this.state.sourceCase = name;
-        
-  
+            // let newState = this.state;
+            this.state.sourceImages = images;
+            this.state.sourceProperties = props;
+            this.state.sourceCase = name;
+
+
 
             for (let i = 0; i < this.state.sourceImages.length; i++) {
-             
+
                 if (this.state.sourceImages[i].name == '') {
                     if (this.state.sourceImages[i].type == 'snapshot') {
                         let endIndex = this.state.sourceImages[i].path.lastIndexOf('.');
@@ -179,11 +229,11 @@ const WSIBox = (wsiurl) => {
                     }
                     else if (this.state.sourceImages[i].type == "label") {
                         this.state.sourceImages.splice(i, 1);
-                        console.log("i= " +i);
+                        console.log("i= " + i);
                         i--;
                     }
                     else {
-                        
+
                         let nameParts = this.state.sourceImages[i].path.split("_");
                         let stain = nameParts[1];
                         let slideID = nameParts[2];
@@ -198,7 +248,7 @@ const WSIBox = (wsiurl) => {
 
             for (let i = 0; i < this.state.sourceImages.length; i++) {
                 console.log(this.state.sourceImages[i]);
-                
+
                 let imageDone = false;
 
                 let j = i;
@@ -222,7 +272,7 @@ const WSIBox = (wsiurl) => {
 
                 if (!imageDone) {
                     console.log(imageDone);
-                    this.loadOpenslideImage(props.openslide,this.state.sourceImages[i]);
+                    this.loadOpenslideImage(props.openslide, this.state.sourceImages[i]);
                 }
             }
         }
@@ -245,7 +295,7 @@ const WSIBox = (wsiurl) => {
             img.onload = function () {
                 // image  has been loaded
                 // add to list of sources
-                var source = {
+                let source = {
                     width: img.width,
                     height: img.height,
                     tileSize: img.width,
@@ -257,16 +307,69 @@ const WSIBox = (wsiurl) => {
                 };
 
                 // add image to the slider
-                this.addImage(image, source);
+                addImage(image, source);
             };
         }
+
+
+
+        pad(num, size) {
+            let s = "000000000" + num;
+            return s.substr(s.length - size);
+        }
+
+        loadMiraxImage(prop, image, presumedMatch) {
+            //If a Mirax image has one and only one potential match, use that as the thumbnail
+            image.thumbnail = prop.url + OPENSLIDE_THUMBNAIL_REQUEST + presumedMatch.path;
+            // image.thumbnail = USE_PROXY_FOR_IMAGES?redirect(image.thumbnail,false):image.thumbnail;
+
+            //Aside from using the TIFF as the thumbnail, loading will proceed using OpenSlide
+            this.loadOpenslideImage(prop, image);
+        }
+
+        doSnapshot(offs) {
+            try {
+                //Get the image from the canvas
+                let canvas = document.getElementsByTagName("canvas")[0];
+
+                //get information about the image
+                let caseName = this.state.sourceCase;
+                let slideName = this.state.currentImage.info.name;
+
+                //Construct a name and file path for the snapshot, starting by determining the figure number
+                for (var i = 0; i < this.sourceImages.length; i++) {
+                    if ('type' in this.sourceImages[i] && this.sourceImages[i].type === 'snapshot') {
+                        offs++;
+                    }
+                }
+                if (offs > 99) {
+                    alert("Error: Exceeded maximum number of snapshots for this case");
+                    return;
+                }
+                let name = "figure." + this.pad(offs, 2) + "." + slideName;
+                let path = caseName + "\\snapshots\\" + name + ".jpg";
+                //Construct image information for the snapshot
+                let image = { type: "snapshot", name: name, path: path, tag: this.state.snapshotDiv, n: this.state.sourceImages.length };
+
+                //Convert the canvas image to jpeg format
+                // var dataURL = canvas.toDataURL("image/jpeg");
+
+
+                this.state.sourceImages.push(image);
+                //Add image to the slide chooser, and prepare it to be loaded by viewer
+                this.loadSnapshot(SERVER_PROPERTIES.snapshot, image);
+            } catch (err) {
+                alert("Error: Could not take a snapshot! Cause: " + err.message);
+            }
+        }
+
 
         loadOpenslideImage(prop, image) {
             //Issue a JSON request for the OpenSlide server to send image specs
             $.getJSON((prop.url + OPENSLIDE_INFO_REQUEST + image.path), function (data) {
                 //Split the return string into an array of image specifications
                 console.log(data)
-                let args = data.contents.split("\n");
+                let args = JSON.stringify(data).split("\n");
 
                 //Define an object that can hold key/value pairs
                 let Collection = function () {
@@ -355,7 +458,7 @@ const WSIBox = (wsiurl) => {
                 let imageSize = (imageHeight * imageWidth) / 1000000000;
 
                 //Set the image levels based on image size
-                let imageLevels =0;
+                let imageLevels = 0;
                 if (imageSize < 2) {
                     imageLevels = 6;
                 }
@@ -399,7 +502,7 @@ const WSIBox = (wsiurl) => {
                     //tileOverlap: 1,
                     imageURL: imageURL,
                     displayAspectRatio: aspectRatio,
-                   
+
                     getTileUrl: function (level, x, y) {
                         //alert(x+", "+y+", "+level);
                         let p = Math.pow(2, level);
@@ -420,96 +523,11 @@ const WSIBox = (wsiurl) => {
                 };
 
                 // add image to the slider
-                this.addImage(image, source);
+                addImage(image, source);
             });
         }
 
-        addImage(image, source) {
-            // add image info to source
-            source.info = image;
 
-            // find tags
-            let tag = "images";
-            if ("tag" in image) {
-                tag = image.tag.replace(/[^a-zA-Z0-9]/g, '');
-            }
-            // check if this tag is new, add if so
-            if ($("#" + tag).length == 0) {
-                if (image.type == "snapshot") {
-                    $("#images").append("<div id=\"" + tag + "\" class=\"tag\">" + image.tag + "</div>");
-                } else {
-                    $("#image-container").append("<div id=\"" + tag + "\" class=\"tag\">" + image.tag + "</div>");
-                }
-            }
-            // add image thumbnail to an appropriate tag
-            let text = "<div class=\"thumbnail-div\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
-                "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" +
-                image.n + "\"><img src=\"" +
-                image.thumbnail + "\" class=\"thumbnail-img\"/>" + "<div class=\"thumbnail-caption\">" + image.name + "</div></a></div>";
-
-            // do something else for snapshot
-            if (image.type == "snapshot") {
-                text = "<div class=\"snapshot-snapshot\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
-                    "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" + image.n + "\">" + image.name + "</a></div>";
-            }
-
-            $("#" + tag).append(text);
-            $("#IMG" + image.n).click(function () {
-                $(".thumbnail-div").css("border-color", "#000");
-                $("#THUMB" + image.n).css("border-color", "#00F");
-                this.openViewer(source);
-            });
-        }
-
-        pad(num, size) {
-            let s = "000000000" + num;
-            return s.substr(s.length-size);
-        }
-
-        loadMiraxImage(prop, image, presumedMatch) {
-            //If a Mirax image has one and only one potential match, use that as the thumbnail
-            image.thumbnail = prop.url+OPENSLIDE_THUMBNAIL_REQUEST+presumedMatch.path;
-            // image.thumbnail = USE_PROXY_FOR_IMAGES?redirect(image.thumbnail,false):image.thumbnail;
-            
-            //Aside from using the TIFF as the thumbnail, loading will proceed using OpenSlide
-            this.loadOpenslideImage(prop, image);
-        }
-
-        doSnapshot(offs){
-            try{
-                //Get the image from the canvas
-                let canvas = document.getElementsByTagName("canvas")[0];
-                
-                //get information about the image
-                let caseName = this.state.sourceCase;
-                let slideName = this.state.currentImage.info.name;
-                
-                //Construct a name and file path for the snapshot, starting by determining the figure number
-                for(var i=0; i < this.sourceImages.length; i++){
-                    if ('type' in this.sourceImages[i] && this.sourceImages[i].type === 'snapshot') {
-                        offs++;
-                    }
-                }
-                if (offs > 99) {
-                    alert("Error: Exceeded maximum number of snapshots for this case");
-                    return;
-                }
-                let name = "figure."+this.pad(offs,2)+"."+slideName;
-                let path = caseName+"\\snapshots\\"+name+".jpg"; 
-                //Construct image information for the snapshot
-                let image = {type:"snapshot",name:name,path:path,tag:this.state.snapshotDiv,n:this.state.sourceImages.length};
-                
-                //Convert the canvas image to jpeg format
-                // var dataURL = canvas.toDataURL("image/jpeg");
-                
-               
-                this.state.sourceImages.push(image);
-                  //Add image to the slide chooser, and prepare it to be loaded by viewer
-                  this.loadSnapshot(SERVER_PROPERTIES.snapshot,image);
-            }catch(err){
-                alert("Error: Could not take a snapshot! Cause: "+err.message);
-            }
-        }
 
     }
     return <WSIBox />
