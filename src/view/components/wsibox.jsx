@@ -28,7 +28,7 @@ var snapshotDiv = "snapshot";
 
 var ourGestureSettingsMouse = {
     scrollToZoom: true,
-    clickToZoom: true,
+    clickToZoom: false,
     dblClickToZoom: false,
     pinchToZoom: false,
     flickEnabled: false,
