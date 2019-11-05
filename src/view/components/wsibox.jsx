@@ -78,7 +78,7 @@ function addImage(image, source) {
     }
     // add image thumbnail to an appropriate tag
     let text = "<div class=\"thumbnail-div\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
-        "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" +
+        "<a href=\"javascript:;\" class=\"thumbnail-a\" id=\"IMG" +
         image.n + "\"><img src=\"" +
         image.thumbnail + "\" class=\"thumbnail-img\"/>" + "<div class=\"thumbnail-caption\">" + image.name + "</div></a></div>";
 
