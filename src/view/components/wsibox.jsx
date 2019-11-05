@@ -237,12 +237,14 @@ function addImage(image, source) {
     // do something else for snapshot
     if (image.type == "snapshot") {
         text = "<div class=\"snapshot-snapshot\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
-            "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" + image.n + "\">" + image.name + "</a></div>";
+            "<a href=\"javascript:;\" class=\"thumbnail-a\" id=\"IMG" + image.n + "\">" + image.name + "</a></div>";
     }
 
     $("#" + tag).append(text);
     $("#IMG" + image.n).click(function () {
         $(".thumbnail-div").css("border-color", "#000");
+        $(".thumbnail-div").css("display", "none");
+        $("#view").css("height", "700px");
         $("#THUMB" + image.n).css("border-color", "#00F");
         openViewer(source);
     });

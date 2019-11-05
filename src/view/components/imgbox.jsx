@@ -21,12 +21,12 @@ const ImgBox = ({imgurl,closebox})=>{
         }
         render(){
             return(
-                <div onClick={closebox} className={styles.masking}>
+                <div className={styles.masking}>
                     <div className={styles.mainbox}>
                    {/* {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <div onClick={this.canvasck} className={styles.canvas}>canvas</div>}*/}
-            {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <WSIBox />}
+            {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <WSIBox onClick={this.canvasck} className={styles.canvas} />}
                     <div className={styles.btnbox}>
-                        <p>关闭</p>
+                        <p onClick={closebox}>关闭</p>
                     </div>
                     </div>
                 </div>
