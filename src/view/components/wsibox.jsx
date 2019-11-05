@@ -141,16 +141,26 @@ function openViewer(source) {
         viewer.open(source);
         currentImage = source;
         console.log(viewer);
-        // if (source.maxLevel == 1) {
-        //     $("#snapshot").hide();
-        //     this.viewer.setMouseNavEnable(false);
-        // } else {
-        //     $("#snapshot").show();
-        //     this.viewer.setMouseNavEnable(true);        }
+        if (source.maxLevel == 1) {
+            $("#snapshot").hide();
+            viewer.setMouseNavEnable(false);
+        } else {
+            $("#snapshot").show();
+            viewer.setMouseNavEnable(true);
+        }
 
     }
+}
 
-
+function setupControls() {
+    $("#snapshot").hide();
+    $("#snapshot")
+        .mouseover(function () {
+            $(this).attr("src", "../../static/images/snapshot_hover.png");
+        })
+        .mouseout(function () {
+            $(this).attr("src", "../../static/images/snapshot_rest.png");
+        });
 }
 
 const WSIBox = (wsiurl) => {
@@ -172,8 +182,19 @@ const WSIBox = (wsiurl) => {
             };
         }
 
+        setupControls() {
+            $("#snapshot").hide();
+            $("#snapshot")
+                .mouseover(function () {
+                    $(this).attr("src", "../../static/images/snapshot_hover.png");
+                })
+                .mouseout(function () {
+                    $(this).attr("src", "../../static/images/snapshot_rest.png");
+                });
+        }
+        
         componentDidMount() {
-            // this.setupControls();
+            this.setupControls();
             let caseName = "1";
             let props = SERVER_PROPERTIES;
             // test
@@ -199,16 +220,7 @@ const WSIBox = (wsiurl) => {
 
 
 
-        // setupControls() {
-        //     $("#snapshot").hide();
-        //     $("#snapshot")
-        //         .mouseover(function () {
-        //             $(this).attr("src", "images/snapshot_hover.png");
-        //         })
-        //         .mouseout(function () {
-        //             $(this).attr("src", "images/snapshot_rest.png");
-        //         });
-        // }
+
 
         loadImages(props, images, name) {
             // console.log("loadimage");
