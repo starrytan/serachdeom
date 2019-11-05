@@ -242,6 +242,8 @@ function addImage(image, source) {
     $("#" + tag).append(text);
     $("#IMG" + image.n).click(function () {
         $(".thumbnail-div").css("border-color", "#000");
+        $(".thumbnail-div").css("display", "none");
+        $("#view").css("height", "700px");
         $("#THUMB" + image.n).css("border-color", "#00F");
         openViewer(source);
     });
