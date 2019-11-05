@@ -59,6 +59,157 @@ var ourGestureSettingsPen = {
     pinchRotate: false
 };
 
+function loadOpenslideImage(prop, image) {
+    //Issue a JSON request for the OpenSlide server to send image specs
+    $.getJSON((prop.url + OPENSLIDE_INFO_REQUEST + image.path), function (data) {
+        //Split the return string into an array of image specifications
+        // console.log(data)
+        let str = JSON.stringify(data);
+        let str2 = JSON.stringify(data);
+        let str3 = str.substr(1,(str2.length-2))
+
+        let args = str3.split(",");
+
+        //Compile a map of the information labels (keys) to data values
+        let imageInfo =  new Map();
+        for (let i = 2; i < args.length; i++) {
+            let entry = args[i];
+            // console.log(entry);
+            let equalSign = entry.indexOf(":");
+            // console.log(entry.substr(0, equalSign))
+            // console.log(entry.substr(equalSign + 1))
+            imageInfo.set(entry.substr(1, equalSign-2), Number.parseInt(entry.substr(equalSign + 2)));
+        }
+        
+       
+        //  console.log(imageInfo.get('openslide.level[0].width'))
+        let imageWidth = +( imageInfo.get("openslide.bounds-width"));
+   
+        if ((imageWidth == undefined) || (isNaN(imageWidth))) {
+            imageWidth = +( imageInfo.get("image.width"));
+        }
+
+
+        if ((imageWidth == undefined) || (isNaN(imageWidth))) {
+            imageWidth = +( imageInfo.get("openslide.level[0].width"));
+        }
+        if ((imageWidth == undefined) || (isNaN(imageWidth))) {
+            imageWidth = +( imageInfo.get("layer.0.width"));
+        }
+
+        console.log(imageWidth)
+        let imageHeight = +( imageInfo.get("openslide.bounds-height"));
+    
+        if ((imageHeight == undefined) || (isNaN(imageHeight))) {
+            imageHeight = +( imageInfo.get("image.height"));
+        }
+        if ((imageHeight == undefined) || (isNaN(imageHeight))) {
+            imageHeight = +( imageInfo.get("openslide.level[0].height"));
+        }
+        if ((imageHeight == undefined) || (isNaN(imageHeight))) {
+            imageHeight = +( imageInfo.get("layer.0.height"));
+        }
+        console.log(imageHeight)
+        //If openslide.bounds-(x,y) defined, extract; otherwise set startX, startY to (0,0)
+        let startX = +( imageInfo.get("openslide.bounds-x"));
+        if ((startX == undefined) || (isNaN(startX))) {
+            startX = 0;
+        }
+        let startY = +( imageInfo.get("openslide.bounds-y"));
+        if ((startY == undefined) || (isNaN(startY))) {
+            startY = 0;
+        }
+
+        //Extract the tilesize 
+        let tileSizeHeight = +( imageInfo.get("tile.height"));
+        let tileSizeWidth = +(imageInfo.get("tile.width"));
+        //OpenSeadragon can also take tileOverlap, aspectRatio as TileSource properties,
+        //but these don't seem to be available in Hamamatsu and Aperio data
+        //May need to determine these for other file types
+
+        let imageURL = image.path;
+        //If thumbnail already defined (e.g. for a Mirax with a paired TIFF), leave it; otherwise set up thumbbnail
+        if ((image.thumbnail === undefined) || (image.thumbnail == null)) {
+            image.thumbnail = prop.url + OPENSLIDE_THUMBNAIL_REQUEST + image.path;
+        }
+
+        //Calculate aspect ratio for use in requesting image URL's
+        let aspectRatio = (imageWidth / imageHeight) / (tileSizeWidth / tileSizeHeight);
+
+        //Calculate image size
+        //Currently this is only used to compare with thresholds, so scale down for more readable code
+        let imageSize = (imageHeight * imageWidth) / 1000000000;
+        console.log(imageSize);
+        //Set the image levels based on image size
+        let imageLevels = 0;
+        if (imageSize < 2) {
+            imageLevels = 6;
+        }
+        else if (imageSize < 6) {
+            imageLevels = 7;
+        }
+        else if (imageSize < 16) {
+            imageLevels = 8;
+        }
+        else if (imageSize < 40) {
+            imageLevels = 9;
+        }
+        else {
+            imageLevels = 10;
+        }
+        //Adjust for aspect ratio 
+        //if (aspectRatio > 2.3) {
+        if (aspectRatio > 1.9) {
+            //For wide images
+            if (imageLevels > 6) {
+                imageLevels--;	//Decrease unless we're already at a low (6) # levels
+            }
+        }
+        else {
+            //For square or narrow images
+            if (imageLevels < 7) {
+                imageLevels++;	//Increase if we're at a low (6) # levels
+            }
+        }
+
+        // add to list of sources
+        var source = {
+            width: imageWidth,
+            height: imageHeight,
+            tileWidth: tileSizeWidth,
+            tileHeight: tileSizeHeight,
+            maxLevel: imageLevels,
+            initX: startX,
+            initY: startY,
+            minLevel: 0,
+            tileOverlap: 1,
+            imageURL: imageURL,
+            displayAspectRatio: aspectRatio,
+
+            getTileUrl: function (level, x, y) {
+                //alert(x+", "+y+", "+level);
+                let p = Math.pow(2, level);
+
+                x = Math.floor((x * this.width) / (p * this.displayAspectRatio));
+                y = Math.floor((y * this.height) / (p));
+                let w = Math.floor(this.width / (p * this.displayAspectRatio));
+                let h = Math.floor(this.height / p);
+
+                x = x + this.initX;
+                y = y + this.initY;
+
+                let url = this.imageURL;
+                url = prop.url + OPENSLIDE_REGION_REQUEST + url;
+                url = url + "&x=" + x + "&y=" + y + "&width=" + w + "&height=" + h + "&size=" + this._tileWidth;
+                return url;
+            }
+        };
+
+        // add image to the slider
+        addImage(image, source);
+    });
+}
+
 function addImage(image, source) {
     // add image info to source
     source.info = image;
@@ -205,6 +356,7 @@ const WSIBox = (wsiurl) => {
                 // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
             this.loadImages(props, images, caseName);
+            document.title = "View: " + caseName;
         }
 
         render() {
@@ -284,8 +436,8 @@ const WSIBox = (wsiurl) => {
                 }
 
                 if (!imageDone) {
-                    console.log(imageDone);
-                    this.loadOpenslideImage(props.openslide, this.state.sourceImages[i]);
+                    // console.log(imageDone);
+                    loadOpenslideImage(props.openslide, this.state.sourceImages[i]);
                 }
             }
         }
@@ -337,7 +489,7 @@ const WSIBox = (wsiurl) => {
             // image.thumbnail = USE_PROXY_FOR_IMAGES?redirect(image.thumbnail,false):image.thumbnail;
 
             //Aside from using the TIFF as the thumbnail, loading will proceed using OpenSlide
-            this.loadOpenslideImage(prop, image);
+            loadOpenslideImage(prop, image);
         }
 
         doSnapshot(offs) {
@@ -377,156 +529,7 @@ const WSIBox = (wsiurl) => {
         }
 
 
-        loadOpenslideImage(prop, image) {
-            //Issue a JSON request for the OpenSlide server to send image specs
-            $.getJSON((prop.url + OPENSLIDE_INFO_REQUEST + image.path), function (data) {
-                //Split the return string into an array of image specifications
-                // console.log(data)
-                let str = JSON.stringify(data);
-                let str2 = JSON.stringify(data);
-                let str3 = str.substr(1,(str2.length-2))
-
-                let args = str3.split(",");
-
-                //Compile a map of the information labels (keys) to data values
-                let imageInfo =  new Map();
-                for (let i = 2; i < args.length; i++) {
-                    let entry = args[i];
-                    // console.log(entry);
-                    let equalSign = entry.indexOf(":");
-                    // console.log(entry.substr(0, equalSign))
-                    // console.log(entry.substr(equalSign + 1))
-                    imageInfo.set(entry.substr(1, equalSign-2), Number.parseInt(entry.substr(equalSign + 2)));
-                }
-                
-               
-                //  console.log(imageInfo.get('openslide.level[0].width'))
-                let imageWidth = +( imageInfo.get("openslide.bounds-width"));
-           
-                if ((imageWidth == undefined) || (isNaN(imageWidth))) {
-                    imageWidth = +( imageInfo.get("image.width"));
-                }
-
-
-                if ((imageWidth == undefined) || (isNaN(imageWidth))) {
-                    imageWidth = +( imageInfo.get("openslide.level[0].width"));
-                }
-                if ((imageWidth == undefined) || (isNaN(imageWidth))) {
-                    imageWidth = +( imageInfo.get("layer.0.width"));
-                }
-
-                console.log(imageWidth)
-                let imageHeight = +( imageInfo.get("openslide.bounds-height"));
-            
-                if ((imageHeight == undefined) || (isNaN(imageHeight))) {
-                    imageHeight = +( imageInfo.get("image.height"));
-                }
-                if ((imageHeight == undefined) || (isNaN(imageHeight))) {
-                    imageHeight = +( imageInfo.get("openslide.level[0].height"));
-                }
-                if ((imageHeight == undefined) || (isNaN(imageHeight))) {
-                    imageHeight = +( imageInfo.get("layer.0.height"));
-                }
-                console.log(imageHeight)
-                //If openslide.bounds-(x,y) defined, extract; otherwise set startX, startY to (0,0)
-                let startX = +( imageInfo.get("openslide.bounds-x"));
-                if ((startX == undefined) || (isNaN(startX))) {
-                    startX = 0;
-                }
-                let startY = +( imageInfo.get("openslide.bounds-y"));
-                if ((startY == undefined) || (isNaN(startY))) {
-                    startY = 0;
-                }
-
-                //Extract the tilesize 
-                let tileSizeHeight = +( imageInfo.get("tile.height"));
-                let tileSizeWidth = +(imageInfo.get("tile.width"));
-                //OpenSeadragon can also take tileOverlap, aspectRatio as TileSource properties,
-                //but these don't seem to be available in Hamamatsu and Aperio data
-                //May need to determine these for other file types
-
-                let imageURL = image.path;
-                //If thumbnail already defined (e.g. for a Mirax with a paired TIFF), leave it; otherwise set up thumbbnail
-                if ((image.thumbnail === undefined) || (image.thumbnail == null)) {
-                    image.thumbnail = prop.url + OPENSLIDE_THUMBNAIL_REQUEST + image.path;
-                }
-
-                //Calculate aspect ratio for use in requesting image URL's
-                let aspectRatio = (imageWidth / imageHeight) / (tileSizeWidth / tileSizeHeight);
-
-                //Calculate image size
-                //Currently this is only used to compare with thresholds, so scale down for more readable code
-                let imageSize = (imageHeight * imageWidth) / 1000000000;
-                console.log(imageSize);
-                //Set the image levels based on image size
-                let imageLevels = 0;
-                if (imageSize < 2) {
-                    imageLevels = 6;
-                }
-                else if (imageSize < 6) {
-                    imageLevels = 7;
-                }
-                else if (imageSize < 16) {
-                    imageLevels = 8;
-                }
-                else if (imageSize < 40) {
-                    imageLevels = 9;
-                }
-                else {
-                    imageLevels = 10;
-                }
-                //Adjust for aspect ratio 
-                //if (aspectRatio > 2.3) {
-                if (aspectRatio > 1.9) {
-                    //For wide images
-                    if (imageLevels > 6) {
-                        imageLevels--;	//Decrease unless we're already at a low (6) # levels
-                    }
-                }
-                else {
-                    //For square or narrow images
-                    if (imageLevels < 7) {
-                        imageLevels++;	//Increase if we're at a low (6) # levels
-                    }
-                }
-
-                // add to list of sources
-                var source = {
-                    width: imageWidth,
-                    height: imageHeight,
-                    tileWidth: tileSizeWidth,
-                    tileHeight: tileSizeHeight,
-                    maxLevel: imageLevels,
-                    initX: startX,
-                    initY: startY,
-                    minLevel: 0,
-                    tileOverlap: 1,
-                    imageURL: imageURL,
-                    displayAspectRatio: aspectRatio,
-
-                    getTileUrl: function (level, x, y) {
-                        //alert(x+", "+y+", "+level);
-                        let p = Math.pow(2, level);
-
-                        x = Math.floor((x * this.width) / (p * this.displayAspectRatio));
-                        y = Math.floor((y * this.height) / (p));
-                        let w = Math.floor(this.width / (p * this.displayAspectRatio));
-                        let h = Math.floor(this.height / p);
-
-                        x = x + this.initX;
-                        y = y + this.initY;
-
-                        let url = this.imageURL;
-                        url = prop.url + OPENSLIDE_REGION_REQUEST + url;
-                        url = url + "&x=" + x + "&y=" + y + "&width=" + w + "&height=" + h + "&size=" + this._tileWidth;
-                        return url;
-                    }
-                };
-
-                // add image to the slider
-                addImage(image, source);
-            });
-        }
+        
 
 
 
