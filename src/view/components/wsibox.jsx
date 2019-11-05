@@ -381,78 +381,66 @@ const WSIBox = (wsiurl) => {
             //Issue a JSON request for the OpenSlide server to send image specs
             $.getJSON((prop.url + OPENSLIDE_INFO_REQUEST + image.path), function (data) {
                 //Split the return string into an array of image specifications
-                console.log(data)
-                let args = JSON.stringify(data).split("\n");
+                // console.log(data)
+                let str = JSON.stringify(data);
+                let str2 = JSON.stringify(data);
+                let str3 = str.substr(1,(str2.length-2))
 
-                //Define an object that can hold key/value pairs
-                let Collection = function () {
-                    this.count = 0;
-                    this.collection = {};
-
-                    this.add = function (key, value) {
-                        if (this.collection[key] != undefined)
-                            return undefined;
-                        this.collection[key] = value;
-                        return ++this.count;
-                    }
-
-                    this.remove = function (key) {
-                        if (this.collection[key] == undefined)
-                            return undefined;
-                        delete this.collection[key];
-                        return --this.count;
-                    }
-
-                    this.item = function (key) {
-                        return this.collection[key];
-                    }
-                }
+                let args = str3.split(",");
 
                 //Compile a map of the information labels (keys) to data values
-                let imageInfo = new Collection();
+                let imageInfo =  new Map();
                 for (let i = 2; i < args.length; i++) {
                     let entry = args[i];
-                    let equalSign = entry.indexOf("=");
-                    imageInfo.add(entry.substr(0, equalSign), entry.substr(equalSign + 1));
+                    // console.log(entry);
+                    let equalSign = entry.indexOf(":");
+                    // console.log(entry.substr(0, equalSign))
+                    // console.log(entry.substr(equalSign + 1))
+                    imageInfo.set(entry.substr(1, equalSign-2), Number.parseInt(entry.substr(equalSign + 2)));
                 }
-
-                console.log(imageInfo);
-                let imageWidth = +(imageInfo.item("openslide.bounds-width"));
+                
+               
+                //  console.log(imageInfo.get('openslide.level[0].width'))
+                let imageWidth = +( imageInfo.get("openslide.bounds-width"));
+           
                 if ((imageWidth == undefined) || (isNaN(imageWidth))) {
-                    imageWidth = +(imageInfo.item("image.width"));
+                    imageWidth = +( imageInfo.get("image.width"));
+                }
+
+
+                if ((imageWidth == undefined) || (isNaN(imageWidth))) {
+                    imageWidth = +( imageInfo.get("openslide.level[0].width"));
                 }
                 if ((imageWidth == undefined) || (isNaN(imageWidth))) {
-                    imageWidth = +(imageInfo.item("openslide.level[0].width"));
-                }
-                if ((imageWidth == undefined) || (isNaN(imageWidth))) {
-                    imageWidth = +(imageInfo.item("layer.0.width"));
+                    imageWidth = +( imageInfo.get("layer.0.width"));
                 }
 
-
-                let imageHeight = +(imageInfo.item("openslide.bounds-height"));
+                console.log(imageWidth)
+                let imageHeight = +( imageInfo.get("openslide.bounds-height"));
+            
                 if ((imageHeight == undefined) || (isNaN(imageHeight))) {
-                    imageHeight = +(imageInfo.item("image.height"));
+                    imageHeight = +( imageInfo.get("image.height"));
                 }
                 if ((imageHeight == undefined) || (isNaN(imageHeight))) {
-                    imageHeight = +(imageInfo.item("openslide.level[0].height"));
+                    imageHeight = +( imageInfo.get("openslide.level[0].height"));
                 }
                 if ((imageHeight == undefined) || (isNaN(imageHeight))) {
-                    imageHeight = +(imageInfo.item("layer.0.height"));
+                    imageHeight = +( imageInfo.get("layer.0.height"));
                 }
-
+                console.log(imageHeight)
                 //If openslide.bounds-(x,y) defined, extract; otherwise set startX, startY to (0,0)
-                let startX = +(imageInfo.item("openslide.bounds-x"));
+                let startX = +( imageInfo.get("openslide.bounds-x"));
                 if ((startX == undefined) || (isNaN(startX))) {
                     startX = 0;
                 }
-                let startY = +(imageInfo.item("openslide.bounds-y"));
+                let startY = +( imageInfo.get("openslide.bounds-y"));
                 if ((startY == undefined) || (isNaN(startY))) {
                     startY = 0;
                 }
 
                 //Extract the tilesize 
-                let tileSizeHeight = +(imageInfo.item("tile.height"));
-                let tileSizeWidth = +(imageInfo.item("tile.width"));
+                let tileSizeHeight = +( imageInfo.get("tile.height"));
+                let tileSizeWidth = +(imageInfo.get("tile.width"));
                 //OpenSeadragon can also take tileOverlap, aspectRatio as TileSource properties,
                 //but these don't seem to be available in Hamamatsu and Aperio data
                 //May need to determine these for other file types
@@ -469,7 +457,7 @@ const WSIBox = (wsiurl) => {
                 //Calculate image size
                 //Currently this is only used to compare with thresholds, so scale down for more readable code
                 let imageSize = (imageHeight * imageWidth) / 1000000000;
-
+                console.log(imageSize);
                 //Set the image levels based on image size
                 let imageLevels = 0;
                 if (imageSize < 2) {
@@ -511,8 +499,8 @@ const WSIBox = (wsiurl) => {
                     maxLevel: imageLevels,
                     initX: startX,
                     initY: startY,
-                    //minLevel: 0,
-                    //tileOverlap: 1,
+                    minLevel: 0,
+                    tileOverlap: 1,
                     imageURL: imageURL,
                     displayAspectRatio: aspectRatio,
 
