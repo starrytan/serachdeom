@@ -2,7 +2,7 @@ import React from 'react';
 import OpenSeadragon from 'openseadragon';
 import '../../static/css/viewer-l.pcss';
 import '../../static/css/viewer-p.pcss';
-import $ from 'jquery'
+import $ from 'jquery';
 
 
 const SERVER_PROPERTIES ={openslide: { url: 'http://2749q65j10.qicp.vip/myserv' }};
@@ -51,28 +51,28 @@ const WSIBox = (wsiurl) => {
 
 
         constructor(props) {
-            super(props);
-            this.currentImage = null;
-            this.sourceImages = null;
-            this.sourceProperties = "";
-            this.sourceCase = "";
-            this.snapshotDiv = "snapshot";
-            this.viewer =  OpenSeadragon;
+         super(props)
             this.state = {
                 ourGestureSettingsMouse: ourGestureSettingsMouse,
                 ourGestureSettingsTouch: ourGestureSettingsTouch,
                 ourGestureSettingsPen: ourGestureSettingsPen,
-            }
+                currentImage: null,
+                sourceImages : [],
+                sourceProperties : "",
+                sourceCase : "",
+                snapshotDiv: "snapshot",
+                viewer :  OpenSeadragon,
+            };
         }
 
         componentDidMount() {
-            this.setupControls();
+            // this.setupControls();
             let caseName = "1";
             let props = SERVER_PROPERTIES;
             // test
 			var images = [
             // { type: "openslide", name: "APERIO_7", path: "KW16-000001_APERIO_7_U00000X.svs", tag: "H&E" },
-			{ type: "openslide", name: "1", path: "1.tiff" }
+			{ type: "openslide", name: "tiff", path: "1.tiff" }
 			// { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
             this.loadImages(props, images, caseName);
@@ -93,17 +93,17 @@ const WSIBox = (wsiurl) => {
         openViewer(source) {
             let repenViewer = false;
 
-            if ((typeof currentImage !== undefined
-                || typeof currentImage !== 'undefined') && (this.currentImage != null)) {
-                if ((typeof viewer !== 'undefined' || typeof viewer !== undefined)
-                    && (this.viewer != null) && (this.viewer.isOpen())) {
-                    if (source.imageURL == this.currentImage.imageURL) {
+            if ((typeof this.state.currentImage !== undefined
+                || typeof this.state.currentImage !== 'undefined') && (this.state.currentImage != null)) {
+                if ((typeof this.state.viewer !== 'undefined' || typeof this.state.viewer !== undefined)
+                    && (this.state.viewer != null) && (this.state.viewer.isOpen())) {
+                    if (source.imageURL == this.state.currentImage.imageURL) {
                         this.viewer.viewport.goHome(true);
                         return;
                     }
                     else {
-                        if (((this.currentImage.maxLevel == 1) && (source.maxLevel > 1))
-                            || ((this.currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
+                        if (((this.state.currentImage.maxLevel == 1) && (source.maxLevel > 1))
+                            || ((this.state.currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
 
                             repenViewer = true;
                         }
@@ -115,7 +115,7 @@ const WSIBox = (wsiurl) => {
                 let showControls = (source.maxLevel > 1);
                 $("#view").text("");
                 $("#view").css("background-image", "none");
-                this.viewer = OpenSeadragon({
+                this.state.viewer = OpenSeadragon({
                     id: "view",
                     autoHideControls: false,
                     visibilityRatio: 0.75,
@@ -129,17 +129,19 @@ const WSIBox = (wsiurl) => {
                     gestureSettingsUnknown: ourGestureSettingsMouse,
                     crossOriginPolicy: 'anonymous'
                 });
-                this.viewer.addHandler("open-failed", () => {
+                this.state.viewer.addHandler("open-failed", () => {
                     console.log("unable to open slide viewer;");
                     alert("unable to open slide viewer");
                 });
-                this.viewer.open(source);
-                this.currentImage = source;
+                this.state.viewer.open(source);
+                this.state.currentImage = source;
 
                 if (source.maxLevel == 1) {
-                    this.viewer.setMouseNavEnable(false);
+                    $("#snapshot").hide();
+                    this.state.viewer.setMouseNavEnable(false);
                 } else {
-                    this.viewer.setMouseNavEnable(true);
+                    $("#snapshot").show();
+                    this.state.viewer.setMouseNavEnable(true);
                 }
 
             }
@@ -147,70 +149,80 @@ const WSIBox = (wsiurl) => {
 
         }
 
-        setupControls() {
-            $("#snapshot").hide();
-            $("#snapshot")
-                .mouseover(function () {
-                    $(this).attr("src", "images/snapshot_hover.png");
-                })
-                .mouseout(function () {
-                    $(this).attr("src", "images/snapshot_rest.png");
-                });
-        }
+        // setupControls() {
+        //     $("#snapshot").hide();
+        //     $("#snapshot")
+        //         .mouseover(function () {
+        //             $(this).attr("src", "images/snapshot_hover.png");
+        //         })
+        //         .mouseout(function () {
+        //             $(this).attr("src", "images/snapshot_rest.png");
+        //         });
+        // }
 
         loadImages(props, images, name) {
-            this.sourceImages = images;
-            this.sourceProperties = props;
-            this.sourceCase = name;
+            // console.log("loadimage");
+                // let newState = this.state;
+                this.state.sourceImages = images;
+                this.state.sourceProperties = props;
+                this.state.sourceCase = name;
+        
+  
 
-
-            for (let i = 0; i < images.lenght; i++) {
-                if (images[i].name == '') {
-                    if (images[i].type == 'snapshot') {
-                        let endIndex = images[i].path.lastIndexOf('.');
-                        images[i].name = images[i].path.substr(0, endIndex);
+            for (let i = 0; i < this.state.sourceImages.length; i++) {
+             
+                if (this.state.sourceImages[i].name == '') {
+                    if (this.state.sourceImages[i].type == 'snapshot') {
+                        let endIndex = this.state.sourceImages[i].path.lastIndexOf('.');
+                        console.log(endIndex);
+                        this.state.sourceImages[i].name = this.state.sourceImages[i].path.substr(0, endIndex);
                     }
-                    else if (images[i].type == "label") {
-                        images.splice(i, 1);
+                    else if (this.state.sourceImages[i].type == "label") {
+                        this.state.sourceImages.splice(i, 1);
+                        console.log("i= " +i);
                         i--;
                     }
                     else {
-                        let nameParts = images[i].path.split("_");
+                        
+                        let nameParts = this.state.sourceImages[i].path.split("_");
                         let stain = nameParts[1];
                         let slideID = nameParts[2];
-                        images[i].name = slideID + "-" + stain;
+                        this.state.sourceImages[i].name = slideID + "-" + stain;
                         if (stain == "H&E") stain = 'HE';
-                        images[i].tag = stain;
+                        this.state.sourceImages[i].tag = stain;
                     }
                 }
             }
 
-            images.sort((a, b) => { return ((a.name < b.name) ? -1 : 1) });
+            this.state.sourceImages.sort((a, b) => { return ((a.name < b.name) ? -1 : 1) });
 
-            for (let i = 0; i < images.lenght; i++) {
+            for (let i = 0; i < this.state.sourceImages.length; i++) {
+                console.log(this.state.sourceImages[i]);
+                
                 let imageDone = false;
 
                 let j = i;
-                while ((j < (images.lenght - 1) && (images[i].name === images[j + 1].name))) {
+                while ((j < (this.state.sourceImages.lenght - 1) && (this.state.sourceImages[i].name === this.state.sourceImages[j + 1].name))) {
                     j++;
                 }
                 if ((j - 1) == 1) {
-                    if ((images[i].type === 'mirax') && (images[j].type === 'tiff')) {
-                        images[i].n = 1;
-                        this.loadMiraxImage(props.openslide, images[i], images[j]);
+                    if ((this.state.sourceImages[i].type === 'mirax') && (this.state.sourceImages[j].type === 'tiff')) {
+                        this.state.sourceImages[i].n = 1;
+                        this.loadMiraxImage(props.openslide, this.state.sourceImages[i], this.state.sourceImages[j]);
                         imageDone = true;
                         i++;
                     }
-                    else if ((images[i].type === "tiff") && (images[j].type === "mirax")) {
-                        images[j].n = i;
-                        this.loadMiraxImage(props.openslide, images[j], images[i]);
+                    else if ((this.state.sourceImages[i].type === "tiff") && (this.state.sourceImages[j].type === "mirax")) {
+                        this.state.sourceImages[j].n = i;
+                        this.loadMiraxImage(props.openslide, this.state.sourceImages[j], this.state.sourceImages[i]);
                         imageDone = true;
                         i++;
                     }
                 }
 
                 if (!imageDone) {
-                    this.loadOpenslideImage(props.openslide,images[i]);
+                    console.log(imageDone);
+                    this.loadOpenslideImage(props.openslide,this.state.sourceImages[i]);
                 }
             }
         }
@@ -223,7 +235,7 @@ const WSIBox = (wsiurl) => {
             }*/
             if (url.indexOf("snapshots\\") == -1) {
                 //If the url doesn't include the path to the snapshot folder, add it
-                url = this.sourceCase + "\\snapshots\\" + url;
+                url = this.state.sourceCase + "\\snapshots\\" + url;
             }
             url = prop.url + url;
             //Open the image in order to derive information that the viewer will need 
@@ -253,6 +265,7 @@ const WSIBox = (wsiurl) => {
             //Issue a JSON request for the OpenSlide server to send image specs
             $.getJSON((prop.url + OPENSLIDE_INFO_REQUEST + image.path), function (data) {
                 //Split the return string into an array of image specifications
+                console.log(data)
                 let args = data.contents.split("\n");
 
                 //Define an object that can hold key/value pairs
@@ -468,8 +481,8 @@ const WSIBox = (wsiurl) => {
                 let canvas = document.getElementsByTagName("canvas")[0];
                 
                 //get information about the image
-                let caseName = this.sourceCase;
-                let slideName = this.currentImage.info.name;
+                let caseName = this.state.sourceCase;
+                let slideName = this.state.currentImage.info.name;
                 
                 //Construct a name and file path for the snapshot, starting by determining the figure number
                 for(var i=0; i < this.sourceImages.length; i++){
@@ -484,13 +497,13 @@ const WSIBox = (wsiurl) => {
                 let name = "figure."+this.pad(offs,2)+"."+slideName;
                 let path = caseName+"\\snapshots\\"+name+".jpg"; 
                 //Construct image information for the snapshot
-                let image = {type:"snapshot",name:name,path:path,tag:this.snapshotDiv,n:this.sourceImages.length};
+                let image = {type:"snapshot",name:name,path:path,tag:this.state.snapshotDiv,n:this.state.sourceImages.length};
                 
                 //Convert the canvas image to jpeg format
                 // var dataURL = canvas.toDataURL("image/jpeg");
                 
                
-                  this.sourceImages.push(image);
+                this.state.sourceImages.push(image);
                   //Add image to the slide chooser, and prepare it to be loaded by viewer
                   this.loadSnapshot(SERVER_PROPERTIES.snapshot,image);
             }catch(err){
