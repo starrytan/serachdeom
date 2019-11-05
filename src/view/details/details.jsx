@@ -40,6 +40,9 @@ class Details extends React.Component {
     }else{
       return
     }
+    if(!target.nextSibling){
+      return
+    }
       if(target.nextSibling.style.maxHeight=='0px'||!target.nextSibling.style.maxHeight){
         target.firstChild.style.transform = 'rotate(0deg)'
         let myheight = target.nextSibling.getAttribute('myheight');

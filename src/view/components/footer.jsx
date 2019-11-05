@@ -6,7 +6,8 @@ const footer = () => {
         bottom:'0px',
         background: '#fff',
         left: '50%',
-        transform: 'translateX(-50%)'
+        transform: 'translateX(-50%)',
+        width:'100%'
     }
     return (
         <div style={{ height: '100px', position:'relative'}}>
