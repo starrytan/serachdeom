@@ -236,7 +236,7 @@ function addImage(image, source) {
     // do something else for snapshot
     if (image.type == "snapshot") {
         text = "<div class=\"snapshot-snapshot\" id=\"THUMB" + image.n + "\" title=\"" + image.name + "\">" +
-            "<a href=\"#\" class=\"thumbnail-a\" id=\"IMG" + image.n + "\">" + image.name + "</a></div>";
+            "<a href=\"javascript:;\" class=\"thumbnail-a\" id=\"IMG" + image.n + "\">" + image.name + "</a></div>";
     }
 
     $("#" + tag).append(text);

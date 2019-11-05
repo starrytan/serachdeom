@@ -22,8 +22,6 @@ class Details extends React.Component {
   };
   closebox = e => {
     e.persist();
-    console.log(e,12313);
-    
     if (e.target.tagName == "IMG") {
       return;
     }
