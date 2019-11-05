@@ -3,7 +3,8 @@ import OpenSeadragon from 'openseadragon';
 import '../../static/css/viewer-l.pcss';
 import '../../static/css/viewer-p.pcss';
 import $ from 'jquery';
-
+const requireContext = require.context('../../static/img', true, /^\.\/.*\.png$/)
+const images = requireContext.keys().map(requireContext)
 
 
 const SERVER_PROPERTIES = { openslide: { url: 'http://2749q65j10.qicp.vip/myserv' } };
