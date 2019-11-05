@@ -5,6 +5,7 @@ import '../../static/css/viewer-p.pcss';
 import $ from 'jquery';
 
 
+
 const SERVER_PROPERTIES = { openslide: { url: 'http://2749q65j10.qicp.vip/myserv' } };
 
 
@@ -127,12 +128,12 @@ function openViewer(source) {
             navigatorSizeRatio: 0.2,
             showNavigator: showControls,
             showNavigationControl: showControls,
-            preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
+            // preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
             gestureSettingsMouse: ourGestureSettingsMouse,
             gestureSettingsTouch: ourGestureSettingsTouch,
             gestureSettingsPen: ourGestureSettingsPen,
             gestureSettingsUnknown: ourGestureSettingsMouse,
-            crossOriginPolicy: 'anonymous'
+            crossOriginPolicy: 'anonymous',
         });
         viewer.addHandler("open-failed", () => {
             console.log("unable to open slide viewer;");
@@ -143,10 +144,10 @@ function openViewer(source) {
         console.log(viewer);
         if (source.maxLevel == 1) {
             $("#snapshot").hide();
-            viewer.setMouseNavEnable(false);
+            viewer.MouseNavEnable=false;
         } else {
             $("#snapshot").show();
-            viewer.setMouseNavEnable(true);
+            viewer.MouseNavEnable=true;
         }
 
     }
@@ -192,7 +193,7 @@ const WSIBox = (wsiurl) => {
                     $(this).attr("src", "../../static/images/snapshot_rest.png");
                 });
         }
-        
+
         componentDidMount() {
             this.setupControls();
             let caseName = "1";
@@ -200,7 +201,7 @@ const WSIBox = (wsiurl) => {
             // test
             var images = [
                 // { type: "openslide", name: "APERIO_7", path: "KW16-000001_APERIO_7_U00000X.svs", tag: "H&E" },
-                { type: "openslide", name: "tiff", path: "1.tiff" }
+                { type: "openslide", name: "1.tiff", path: "1.tiff" }
                 // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
             this.loadImages(props, images, caseName);
@@ -415,7 +416,7 @@ const WSIBox = (wsiurl) => {
                     imageInfo.add(entry.substr(0, equalSign), entry.substr(equalSign + 1));
                 }
 
-
+                console.log(imageInfo);
                 let imageWidth = +(imageInfo.item("openslide.bounds-width"));
                 if ((imageWidth == undefined) || (isNaN(imageWidth))) {
                     imageWidth = +(imageInfo.item("image.width"));
