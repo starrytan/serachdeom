@@ -207,6 +207,7 @@ function loadOpenslideImage(prop, image) {
 
         // add image to the slider
         // addImage(image, source);
+        console.log("ok ----------------------------------")
         openViewer(source);
     });
 }
@@ -251,19 +252,57 @@ function addImage(image, source) {
 }
 
 function openViewer(source) {
+    console.log("ok------------1")
     let repenViewer = false;
-
+//    console.log(currentImage) 
+//    console.log(repenViewer)
     if ((typeof currentImage !== undefined
         || typeof currentImage !== 'undefined') && (currentImage != null)) {
+            console.log("22222")
         if ((typeof viewer !== 'undefined' || typeof viewer !== undefined)
             && (viewer != null) && (viewer.isOpen())) {
+                console.log("33333")
             if (source.imageURL == currentImage.imageURL) {
+                console.log("44444")
                 viewer.viewport.goHome(true);
-                return;
+                $("#view").text("");
+                $("#view").css("background-image", "none");
+                $("#view").css("height", "763px");
+                let showControls = (source.maxLevel > 1);
+                viewer = OpenSeadragon({
+                    id: "view",
+                    autoHideControls: false,
+                    visibilityRatio: 0.75,
+                    navigatorSizeRatio: 0.2,
+                    showNavigator: showControls,
+                    showNavigationControl: showControls,
+                    preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
+                    gestureSettingsMouse: ourGestureSettingsMouse,
+                    gestureSettingsTouch: ourGestureSettingsTouch,
+                    gestureSettingsPen: ourGestureSettingsPen,
+                    gestureSettingsUnknown: ourGestureSettingsMouse,
+                    crossOriginPolicy: 'anonymous',
+                });
+                viewer.addHandler("open-failed", () => {
+                    console.log("unable to open slide viewer;");
+                    alert("unable to open slide viewer");
+                });
+                viewer.open(source);
+                currentImage = source;
+                // console.log(viewer);
+                if (source.maxLevel == 1) {
+                    $("#snapshot").hide();
+                    viewer.MouseNavEnable=false;
+                } else {
+                    $("#snapshot").show();
+                    viewer.MouseNavEnable=true;
+                }
+                repenViewer = false;
             }
             else {
-                if (((this.state.currentImage.maxLevel == 1) && (source.maxLevel > 1))
-                    || ((this.state.currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
+                console.log("55555")
+                if (((currentImage.maxLevel == 1) && (source.maxLevel > 1))
+                    || ((currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
 
                     repenViewer = true;
                 }
@@ -272,6 +311,7 @@ function openViewer(source) {
     }
 
     if ((repenViewer) || (!viewer)) {
+        console.log('ok----------------------2')
         let showControls = (source.maxLevel > 1);
         // $('#thumbnail-div').css('z-index',"-2");
         $("#view").text("");
@@ -305,7 +345,8 @@ function openViewer(source) {
             $("#snapshot").show();
             viewer.MouseNavEnable=true;
         }
-
+        repenViewer = false;
+    
     }
 }
 
@@ -432,7 +473,7 @@ const WSIBox = (wsiurl) => {
                 }
 
                 if (!imageDone) {
-                    // console.log(imageDone);
+                     console.log(imageDone);
                     loadOpenslideImage(props.openslide, this.state.sourceImages[i]);
                 }
             }
