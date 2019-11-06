@@ -4,10 +4,6 @@ import '../../static/css/viewer-l.pcss';
 import '../../static/css/viewer-p.pcss';
 import $ from 'jquery';
 import PropTypes from 'prop-types';
-const requireContext = require.context('../../static/img', true, /^\.\/.*\.png$/)
-const images = requireContext.keys().map(requireContext)
-
-
 const SERVER_PROPERTIES = { openslide: { url: 'http://2749q65j10.qicp.vip/myserv' } };
 
 
@@ -284,6 +280,7 @@ function openViewer(source) {
                     gestureSettingsPen: ourGestureSettingsPen,
                     gestureSettingsUnknown: ourGestureSettingsMouse,
                     crossOriginPolicy: 'anonymous',
+                    prefixUrl:["http://2749q65j10.qicp.vip/images/"]
                 });
                 viewer.addHandler("open-failed", () => {
                     console.log("unable to open slide viewer;");
@@ -332,6 +329,7 @@ function openViewer(source) {
             gestureSettingsPen: ourGestureSettingsPen,
             gestureSettingsUnknown: ourGestureSettingsMouse,
             crossOriginPolicy: 'anonymous',
+            prefixUrl:["http://2749q65j10.qicp.vip/images/"]
         });
         viewer.addHandler("open-failed", () => {
             console.log("unable to open slide viewer;");
