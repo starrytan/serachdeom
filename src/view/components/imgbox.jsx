@@ -6,9 +6,14 @@ const ImgBox = ({imgurl,closebox})=>{
     class Imgbox extends React.Component{
         constructor(props){
             super(props)
+            let temp = imgurl;
+            let start = temp.lastIndexOf("/");
+  
+            let temp2 = temp.substr((start+1)).split(".");
+            let temp3  = { type: "openslide", name: temp2[0]+".tiff", path: temp2[0]+".tiff" } ;
             this.state = {
                 viewtype:1,
-                imgurl:imgurl
+                value:temp3
             }
         }
         switch = (e)=>{
@@ -22,6 +27,7 @@ const ImgBox = ({imgurl,closebox})=>{
             e.stopPropagation();
         }
         render(){
+            console.log(this.state.value)
             return(
                 <div className={styles.masking}>
                     <div className={styles.mainbox}>
@@ -34,16 +40,19 @@ const ImgBox = ({imgurl,closebox})=>{
                 </div>
             )
         }
-        getChildContext() {
+        static getChildContext() {
+            
             return {
-                value: this.state.imgurl
+                value: this.state.value
             }
+        }
+
+        static chlidContextTypes = {
+            value: PropTypes.string
         }
     }
     
-    Imgbox.chlidContextTypes = {
-        value: PropTypes.string
-    }
+   
     return <Imgbox/>;
 }
 export default ImgBox;

@@ -395,9 +395,11 @@ const WSIBox = (wsiurl) => {
                 // { type: "openslide", name: "1.tiff", path: "1.t iff" }
                 // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
+            images.push(this.contextTypes.value)
              this.loadImages(props, images, caseName);
             // loadOpenslideImage(props,images)
             // document.title = "View: " + caseName;
+            images.pop()
         }
 
         render() {
@@ -571,14 +573,14 @@ const WSIBox = (wsiurl) => {
 
 
         
-
+        static contextTypes = {
+            value: PropTypes.string
+        }  
 
 
     }
 
-    WSIBox.contextTypes = {
-        value: PropTypes.string
-    }    
+      
     return <WSIBox />
 }
 
