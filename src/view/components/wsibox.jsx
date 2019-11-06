@@ -3,6 +3,7 @@ import OpenSeadragon from 'openseadragon';
 import '../../static/css/viewer-l.pcss';
 import '../../static/css/viewer-p.pcss';
 import $ from 'jquery';
+import PropTypes from 'prop-types';
 const requireContext = require.context('../../static/img', true, /^\.\/.*\.png$/)
 const images = requireContext.keys().map(requireContext)
 
@@ -365,7 +366,6 @@ function setupControls() {
 const WSIBox = (wsiurl) => {
     class WSIBox extends React.Component {
 
-
         constructor(props) {
             super(props)
             this.state = {
@@ -378,18 +378,21 @@ const WSIBox = (wsiurl) => {
                 sourceCase: "",
                 snapshotDiv: "snapshot",
                 viewer: OpenSeadragon,
+                value:this.context
             };
+            
         }
 
 
         componentDidMount() {
             setupControls();
+            console.log(this.state.value)
             let caseName = "1";
             let props = SERVER_PROPERTIES;
             // test
             var images = [
                 // { type: "openslide", name: "APERIO_7", path: "KW16-000001_APERIO_7_U00000X.svs", tag: "H&E" },
-                { type: "openslide", name: "1.tiff", path: "1.tiff" }
+                // { type: "openslide", name: "1.tiff", path: "1.t iff" }
                 // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
              this.loadImages(props, images, caseName);
@@ -572,6 +575,10 @@ const WSIBox = (wsiurl) => {
 
 
     }
+
+    WSIBox.contextTypes = {
+        value: PropTypes.string
+    }    
     return <WSIBox />
 }
 

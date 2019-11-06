@@ -1,12 +1,14 @@
 import React from 'react';
 import styles from '../../static/css/components.pcss';
 import WSIBox from './wsibox';
+import PropTypes from 'prop-types';
 const ImgBox = ({imgurl,closebox})=>{
     class Imgbox extends React.Component{
         constructor(props){
             super(props)
             this.state = {
-                viewtype:1
+                viewtype:1,
+                imgurl:imgurl
             }
         }
         switch = (e)=>{
@@ -32,6 +34,15 @@ const ImgBox = ({imgurl,closebox})=>{
                 </div>
             )
         }
+        getChildContext() {
+            return {
+                value: this.state.imgurl
+            }
+        }
+    }
+    
+    Imgbox.chlidContextTypes = {
+        value: PropTypes.string
     }
     return <Imgbox/>;
 }
