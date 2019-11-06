@@ -147,7 +147,7 @@
   *     <strong>DEPRECATED</strong>. A relative path to load a DZI file from the server.
   *     Prefer the newer Options.tileSources.
   *
-  * @property {String} [prefixUrl='/images/']
+  * @property {String} [prefixUrl='../img/']
   *     Prepends the prefixUrl to navImages paths, which is very useful
   *     since the default paths are rarely useful for production
   *     environments.
@@ -742,7 +742,7 @@
   */
 
 
-function OpenSeadragon( options ){
+ function OpenSeadragon( options ){
     return new OpenSeadragon.Viewer( options );
 }
 

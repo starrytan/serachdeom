@@ -3,9 +3,7 @@ import OpenSeadragon from 'openseadragon';
 import '../../static/css/viewer-l.pcss';
 import '../../static/css/viewer-p.pcss';
 import $ from 'jquery';
-
-
-
+import PropTypes from 'prop-types';
 const SERVER_PROPERTIES = { openslide: { url: 'http://2749q65j10.qicp.vip/myserv' } };
 
 
@@ -207,6 +205,7 @@ function loadOpenslideImage(prop, image) {
 
         // add image to the slider
         // addImage(image, source);
+        console.log("ok ----------------------------------")
         openViewer(source);
     });
 }
@@ -251,19 +250,58 @@ function addImage(image, source) {
 }
 
 function openViewer(source) {
+    console.log("ok------------1")
     let repenViewer = false;
-
+//    console.log(currentImage) 
+//    console.log(repenViewer)
     if ((typeof currentImage !== undefined
         || typeof currentImage !== 'undefined') && (currentImage != null)) {
+            console.log("22222")
         if ((typeof viewer !== 'undefined' || typeof viewer !== undefined)
             && (viewer != null) && (viewer.isOpen())) {
+                console.log("33333")
             if (source.imageURL == currentImage.imageURL) {
+                console.log("44444")
                 viewer.viewport.goHome(true);
-                return;
+                $("#view").text("");
+                $("#view").css("background-image", "none");
+                $("#view").css("height", "763px");
+                let showControls = (source.maxLevel > 1);
+                viewer = OpenSeadragon({
+                    id: "view",
+                    autoHideControls: false,
+                    visibilityRatio: 0.75,
+                    navigatorSizeRatio: 0.2,
+                    showNavigator: showControls,
+                    showNavigationControl: showControls,
+                    preserveViewport: true,	//only relevent if we have a sequence of images, could revisit in future
+                    gestureSettingsMouse: ourGestureSettingsMouse,
+                    gestureSettingsTouch: ourGestureSettingsTouch,
+                    gestureSettingsPen: ourGestureSettingsPen,
+                    gestureSettingsUnknown: ourGestureSettingsMouse,
+                    crossOriginPolicy: 'anonymous',
+                    prefixUrl:["http://2749q65j10.qicp.vip/images/"]
+                });
+                viewer.addHandler("open-failed", () => {
+                    console.log("unable to open slide viewer;");
+                    alert("unable to open slide viewer");
+                });
+                viewer.open(source);
+                currentImage = source;
+                // console.log(viewer);
+                if (source.maxLevel == 1) {
+                    $("#snapshot").hide();
+                    viewer.MouseNavEnable=false;
+                } else {
+                    $("#snapshot").show();
+                    viewer.MouseNavEnable=true;
+                }
+                repenViewer = false;
             }
             else {
-                if (((this.state.currentImage.maxLevel == 1) && (source.maxLevel > 1))
-                    || ((this.state.currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
+                console.log("55555")
+                if (((currentImage.maxLevel == 1) && (source.maxLevel > 1))
+                    || ((currentImage.maxLevel > 1) && (source.maxLevel == 1))) {
 
                     repenViewer = true;
                 }
@@ -272,6 +310,7 @@ function openViewer(source) {
     }
 
     if ((repenViewer) || (!viewer)) {
+        console.log('ok----------------------2')
         let showControls = (source.maxLevel > 1);
         // $('#thumbnail-div').css('z-index',"-2");
         $("#view").text("");
@@ -290,6 +329,7 @@ function openViewer(source) {
             gestureSettingsPen: ourGestureSettingsPen,
             gestureSettingsUnknown: ourGestureSettingsMouse,
             crossOriginPolicy: 'anonymous',
+            prefixUrl:["http://2749q65j10.qicp.vip/images/"]
         });
         viewer.addHandler("open-failed", () => {
             console.log("unable to open slide viewer;");
@@ -305,7 +345,8 @@ function openViewer(source) {
             $("#snapshot").show();
             viewer.MouseNavEnable=true;
         }
-
+        repenViewer = false;
+    
     }
 }
 
@@ -320,9 +361,8 @@ function setupControls() {
         });
 }
 
-const WSIBox = (wsiurl) => {
+const WSIBox = (value) => {
     class WSIBox extends React.Component {
-
 
         constructor(props) {
             super(props)
@@ -336,23 +376,28 @@ const WSIBox = (wsiurl) => {
                 sourceCase: "",
                 snapshotDiv: "snapshot",
                 viewer: OpenSeadragon,
+                value:value
             };
+            
         }
 
 
         componentDidMount() {
             setupControls();
+            console.log(this.state.value.value)
             let caseName = "1";
             let props = SERVER_PROPERTIES;
             // test
             var images = [
                 // { type: "openslide", name: "APERIO_7", path: "KW16-000001_APERIO_7_U00000X.svs", tag: "H&E" },
-                { type: "openslide", name: "1.tiff", path: "1.tiff" }
+                // { type: "openslide", name: "1.tiff", path: "1.t iff" }
                 // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
+            images.push(this.state.value.value)
              this.loadImages(props, images, caseName);
             // loadOpenslideImage(props,images)
             // document.title = "View: " + caseName;
+            images.pop()
         }
 
         render() {
@@ -432,7 +477,7 @@ const WSIBox = (wsiurl) => {
                 }
 
                 if (!imageDone) {
-                    // console.log(imageDone);
+                     console.log(imageDone);
                     loadOpenslideImage(props.openslide, this.state.sourceImages[i]);
                 }
             }
@@ -526,10 +571,14 @@ const WSIBox = (wsiurl) => {
 
 
         
-
+        static contextTypes = {
+            value: PropTypes.string
+        }  
 
 
     }
+
+      
     return <WSIBox />
 }
 
