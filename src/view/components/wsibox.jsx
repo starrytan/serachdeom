@@ -363,7 +363,7 @@ function setupControls() {
         });
 }
 
-const WSIBox = (wsiurl) => {
+const WSIBox = (value) => {
     class WSIBox extends React.Component {
 
         constructor(props) {
@@ -378,7 +378,7 @@ const WSIBox = (wsiurl) => {
                 sourceCase: "",
                 snapshotDiv: "snapshot",
                 viewer: OpenSeadragon,
-                value:this.context
+                value:value
             };
             
         }
@@ -386,7 +386,7 @@ const WSIBox = (wsiurl) => {
 
         componentDidMount() {
             setupControls();
-            console.log(this.state.value)
+            console.log(this.state.value.value)
             let caseName = "1";
             let props = SERVER_PROPERTIES;
             // test
@@ -395,7 +395,7 @@ const WSIBox = (wsiurl) => {
                 // { type: "openslide", name: "1.tiff", path: "1.t iff" }
                 // { type: "snapshot", name: "figure.01.7-APERIO", path: "Case1\\snapshots\\figure.01.7-APERIO.jpg", tag: "Snapshots" },
             ];
-            images.push(this.contextTypes.value)
+            images.push(this.state.value.value)
              this.loadImages(props, images, caseName);
             // loadOpenslideImage(props,images)
             // document.title = "View: " + caseName;

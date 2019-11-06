@@ -15,6 +15,7 @@ const ImgBox = ({imgurl,closebox})=>{
                 viewtype:1,
                 value:temp3
             }
+            this.props.value =temp3;
         }
         switch = (e)=>{
             e.persist();
@@ -27,12 +28,12 @@ const ImgBox = ({imgurl,closebox})=>{
             e.stopPropagation();
         }
         render(){
-            console.log(this.state.value)
+            console.log(this.props.value)
             return(
                 <div className={styles.masking}>
                     <div className={styles.mainbox}>
                    {/* {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <div onClick={this.canvasck} className={styles.canvas}>canvas</div>}*/}
-            {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <WSIBox onClick={this.canvasck} className={styles.canvas} />}
+            {this.state.viewtype == 1 ? <img onClick={this.switch} src={imgurl}></img> : <WSIBox onClick={this.canvasck} className={styles.canvas} value={this.props.value} />}
                     <div className={styles.btnbox}>
                         <p onClick={closebox}>关闭</p>
                     </div>
