@@ -2,8 +2,16 @@
     img {
         display: block;
         margin: 0 auto;
-        margin-top: 20px;
     }
+}
+.viewall{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+}
+.viewall:hover{
+    color: #198bec
 }
 
 .example {
@@ -28,9 +36,14 @@
     border-radius: 4px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
     padding: 10px 15px;
-    cursor: pointer;
     transform: translateX(-100%);
+    position: relative;
     animation: faderight .2s forwards;
+    display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+        max-height:295px;
 
     p {
         margin-bottom: 0
@@ -60,9 +73,9 @@
     }
 }
 
-.box:hover {
+/* .box:hover {
     text-decoration: underline;
-}
+} */
 
 .hr {
     margin-bottom: 15px;

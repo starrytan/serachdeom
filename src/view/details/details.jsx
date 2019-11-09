@@ -11,7 +11,7 @@ class Details extends React.Component {
     super(props);
     this.state = {
       imgurl: "",
-      data:JSON.parse(localStorage.getItem('listdata')),
+      data:this.props.data,
       visibility:true
     };
   }
@@ -56,7 +56,7 @@ class Details extends React.Component {
   render() {
     return (
       <div>
-        <div className={styles.PageHeader}><span onClick={()=>{this.props.history.go(-1)}}><Icon type="arrow-left" />Back</span></div>
+        {/* <div className={styles.PageHeader}><span onClick={()=>{this.props.history.go(-1)}}><Icon type="arrow-left" />Back</span></div> */}
         <div className={styles.title}>{this.state.data.title}</div>
         <div className={styles.main}>
           <div className={styles.box}>
@@ -80,7 +80,7 @@ class Details extends React.Component {
               }}></div>
             {/*<p className={styles.titlename}>小节：</p>*/}
           </div>
-          <div className={styles.rightbox}>
+          {this.state.data.urls&&this.state.data.urls.length>0?<div className={styles.rightbox}>
             {this.state.data.urls ? this.state.data.urls.slice(0, 2).map((item,index)=>{
               return(
                 <div key={index} className={styles.infobox}>
@@ -97,13 +97,13 @@ class Details extends React.Component {
               </div>
               )
             }):''}
-          </div>
+          </div>:''}
         </div>
-        <Footer />
+        {/* <Footer /> */}
         {this.state.imgurl? <Imgbox closebox={this.closebox} imgurl={this.state.imgurl} /> : ""}
-        <BackTop>
+        {/* <BackTop>
           <div className={styles.backtop}>UP</div>
-        </BackTop>
+        </BackTop> */}
       </div>
     );
   }

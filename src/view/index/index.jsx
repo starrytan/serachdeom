@@ -4,7 +4,7 @@ import {Tabs, Input, Pagination, Spin} from 'antd';
 import Footer from '../components/footer';
 import common from '../../static/jsx/common';
 import axios from 'axios';
-import Imgbox from '../components/imgbox';
+import Details from '../details/details';
 const {TabPane} = Tabs;
 const {Search} = Input;
 function callback(key) {
@@ -14,14 +14,12 @@ class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            example: [
-//            '李白', '杜甫', '白居易', '苏轼', '于谦'
-            ],
-            list: [],
+            example: [],
+            list:[],
             loading: false,
             pageinfo:{},
             keywords:'',
-            imgurl:''
+            viewallarr:[]
         }
     }
     search = (val) => {
@@ -57,34 +55,23 @@ class Index extends React.Component {
                 console.log('err: ', err);
             })
     }
-    jump = (item) => {
-        localStorage.setItem('listdata',JSON.stringify(item));
-        this
-            .props
-            .history
-            .push('/details?id=' + item.id)
-    }
     handchange = (e)=>{
         e.persist();
         this.setState({
             keywords:e.target.value
         })
     }
-    viewimg = (imgurl,e)=>{
-        console.log('e: ', e);
-        e.stopPropagation()
+    viewall = (index)=>{
+        let arr = this.state.viewallarr;
+        let num = arr.indexOf(index);
+        if(num>-1){
+            arr.splice(num,1)
+        }else{
+            arr.push(index)
+        }
         this.setState({
-            imgurl:imgurl
+            viewallarr:arr
         })
-    }
-    closebox = (e)=>{
-        e.persist();
-        if (e.target.tagName == "IMG") {
-            return;
-          }
-        this.setState({
-            imgurl:''
-        })     
     }
     render() {
         console.log(this.state.list);
@@ -119,30 +106,18 @@ class Index extends React.Component {
                                         .list
                                         .map((item, index) => {
                                             return (
-                                                <div
+                                                 <div
                                                     id={'box' + index}
-                                                    onClick={() => {
-                                                    this.jump(item)
-                                                }}
                                                     key={index}
                                                     style={{
-                                                    animationDelay: 0.05 *index + 's'
+                                                    animationDelay: 0.05 *index + 's',
+                                                    maxHeight:this.state.viewallarr.indexOf(index)>-1?'2000px':'295px'
                                                 }}
                                                     className={styles.box}>
-                                                    <p className={styles.title}>{item.title}</p>
-                                                    {/*<p
-                                                        className={styles.content}
-                                                        dangerouslySetInnerHTML={{
-                                                        __html: item.title
-                                                    }}></p>*/}
-                                                    <div className={styles.imglist}>
-                                                    {item.urls&&index===0?item.urls.slice(0,2).map((img,imgdex)=>{
-                                                        return(
-                                                            <img onClick={(e)=>{this.viewimg(img,e)}} key={imgdex} src={img} />
-                                                        )
-                                                    }):''}
-                                                    </div>
-                                                </div>
+                                                    <div onClick={()=>{this.viewall(index)}} className={styles.viewall}>查看词条</div>
+                                                    <Details data={item} />
+                                                 </div>
+                                               
                                             )
                                         })}
                         </div>
@@ -154,7 +129,6 @@ class Index extends React.Component {
                     </TabPane>
                 </Tabs>
                 <Footer/>
-                {this.state.imgurl?<Imgbox closebox={this.closebox} imgurl={this.state.imgurl}/>:''}
             </div>
         )
     }
