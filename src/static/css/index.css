@@ -9,7 +9,10 @@
   padding: 10px 20px;
 }
 html{
-  height: auto !important;
+  height: auto !important; 
+}
+html,body{
+  scroll-behavior:smooth
 }
 .lazyload{
   opacity: 0;

@@ -20,7 +20,7 @@ class Index extends React.Component {
             loading: false,
             pageinfo:{},
             keywords:'',
-            viewallarr:[],
+            viewallarr:[0],
             imgurl:''
         }
     }
@@ -63,13 +63,14 @@ class Index extends React.Component {
             keywords:e.target.value
         })
     }
-    viewall = (index)=>{
+    viewall = (index,e)=>{
+        e.persist();
         let arr = this.state.viewallarr;
         let num = arr.indexOf(index);
         if(num>-1){
-            arr.splice(num,1)
+            arr.splice(num,1);
         }else{
-            arr.push(index)
+            arr.push(index);
         }
         this.setState({
             viewallarr:arr
@@ -127,11 +128,11 @@ class Index extends React.Component {
                                                     key={index}
                                                     style={{
                                                     animationDelay: 0.05 *index + 's',
-                                                    maxHeight:this.state.viewallarr.indexOf(index)>-1?'2000px':''
+                                                    maxHeight:this.state.viewallarr.indexOf(index)>-1?'none':index==0?'400px':'100px'
                                                 }}
                                                     className={styles.box}>
-                                                    <div onClick={()=>{this.viewall(index)}} className={styles.viewall}>{this.state.viewallarr.indexOf(index)>-1?'收起词条':'查看词条'}</div>
-                                                    <Details viewimg={this.viewimg} data={item} />
+                                                    {/* <div onClick={()=>{this.viewall(index)}} className={styles.viewall}>{this.state.viewallarr.indexOf(index)>-1?'收起词条':'查看词条'}</div> */}
+                                                    <Details unfold={this.viewall} viewimg={this.viewimg} data={item} index={index} />
                                                  </div>
                                                
                                             )
@@ -150,6 +151,7 @@ class Index extends React.Component {
         )
     }
     componentWillMount() {
+        
     }
     componentDidMount() {
         let keywords = common.geturldata(this.props.location.search).keywords;

@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./details.pcss";
-import Imgbox from "../components/imgbox";
 import common from "../../static/jsx/common";
 import imgup from '../../static/img/up_arrow.svg';
 import './no.css'
@@ -19,7 +18,6 @@ class Details extends React.Component {
   flexible = (e)=>{
     e.persist();
     let target;
-    console.log(e.target.tagName,);
     if(e.target.tagName=='B'){
       target=e.target;
     }else if(e.target.parentNode.tagName=='B'){
@@ -34,16 +32,16 @@ class Details extends React.Component {
         target.firstChild.style.transform = 'rotate(0deg)'
         let myheight = target.nextSibling.getAttribute('myheight');
         target.nextSibling.style.maxHeight =myheight+'px'
-
       }else{
         target.nextSibling.style.maxHeight = '0px';
         target.firstChild.style.transform = 'rotate(-90deg)'
       }
   }
   render() {
+    const {unfold,index} = this.props;
     return (
-      <div>
-        <div className={styles.title}>{this.state.data.title}</div>
+      <div id={'box'+this.props.index}>
+        <div style={{cursor:'pointer'}} onClick={(e)=>{unfold(index,e)}} className={styles.title}>{this.state.data.title}</div>
         <div className={styles.main}>
           <div className={styles.box}>
             <p>{this.state.data.section}</p>
@@ -83,10 +81,10 @@ class Details extends React.Component {
     let idreg = /t\d/;
     let data = this.state.data;
     console.log('data: ', data);
-    data.content=data.content.replace(/<b class="bb1">/g,'<b class="bb1"><img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:10px" src="'+imgup+'"/>');
-    data.content=data.content.replace(/<b class="bb2">/g,'<b class="bb2"><img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:10px" src="'+imgup+'"/>');
-    data.content=data.content.replace(/<span>/g,'<span class="mainbox">');
-    data.content=data.content.replace(/<span class="sub"/g,'<span class="mainbox sub"');
+    data.content=data.content.replace(/<b class="bb1">/g,`<b class="bb1"><img style="width:10px;transform:rotate(${'-90deg'});transition:transform .3s;margin-right:10px" src="${imgup}"/>`);
+    data.content=data.content.replace(/<b class="bb2">/g,`<b class="bb2"><img style="width:10px;transform:rotate(${'-90deg'});transition:transform .3s;margin-right:10px" src="${imgup}"/>`);
+    data.content=data.content.replace(/<span>/g,`<span class="mainbox${this.props.index}">`);
+    data.content=data.content.replace(/<span class="sub"/g,`<span class="mainbox${this.props.index} sub"`);
     let imgarr = data.content.match(reg);
     if(imgarr instanceof Array){
       imgarr.map(item => {
@@ -102,13 +100,12 @@ class Details extends React.Component {
   }
   componentDidMount() {
     if(this.state.data){
-      let mainbox = document.getElementsByClassName('mainbox');
+      let mainbox = document.getElementsByClassName(`mainbox${this.props.index}`);
       for(let box of mainbox){
-        console.log('box: ', box);
         box.setAttribute('myheight',box.clientHeight+20);
-        setTimeout(()=>{
-          box.style.maxHeight='0px'
-        },100)
+          setTimeout(()=>{
+              box.style.maxHeight='0px'
+          },100)
       }
       this.setState({
         visibility:false
