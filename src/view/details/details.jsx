@@ -1,9 +1,7 @@
 import React from "react";
 import styles from "./details.pcss";
-import Footer from "../components/footer";
 import Imgbox from "../components/imgbox";
 import common from "../../static/jsx/common";
-import {BackTop,Icon} from "antd";
 import imgup from '../../static/img/up_arrow.svg';
 import './no.css'
 class Details extends React.Component {
@@ -16,18 +14,7 @@ class Details extends React.Component {
     };
   }
   viewimg = (item) => {
-    this.setState({
-      imgurl: item
-    });
-  };
-  closebox = e => {
-    e.persist();
-    if (e.target.tagName == "IMG") {
-      return;
-    }
-    this.setState({
-      imgurl: ""
-    });
+    this.props.viewimg(item)
   };
   flexible = (e)=>{
     e.persist();
@@ -56,19 +43,9 @@ class Details extends React.Component {
   render() {
     return (
       <div>
-        {/* <div className={styles.PageHeader}><span onClick={()=>{this.props.history.go(-1)}}><Icon type="arrow-left" />Back</span></div> */}
         <div className={styles.title}>{this.state.data.title}</div>
         <div className={styles.main}>
           <div className={styles.box}>
-           {/* <p className={styles.titlename}>作者：</p>
-            <p>{this.state.data.author}</p>
-            <p className={styles.titlename}>来源：</p>
-            <p>{this.state.data.source}</p>
-            <p className={styles.titlename}>标题：</p>
-            <p><b>{this.state.data.title}</b></p>
-            <p className={styles.titlename}>章节：</p>
-            <p><b>{this.state.data.capter}</b></p>
-            <p className={styles.titlename}><b>简介：</b></p>*/}
             <p>{this.state.data.section}</p>
             <div
               onClick={this.flexible}
@@ -78,7 +55,6 @@ class Details extends React.Component {
               dangerouslySetInnerHTML={{
                 __html: this.state.data.content
               }}></div>
-            {/*<p className={styles.titlename}>小节：</p>*/}
           </div>
           {this.state.data.urls&&this.state.data.urls.length>0?<div className={styles.rightbox}>
             {this.state.data.urls ? this.state.data.urls.slice(0, 2).map((item,index)=>{
@@ -99,11 +75,6 @@ class Details extends React.Component {
             }):''}
           </div>:''}
         </div>
-        {/* <Footer /> */}
-        {this.state.imgurl? <Imgbox closebox={this.closebox} imgurl={this.state.imgurl} /> : ""}
-        {/* <BackTop>
-          <div className={styles.backtop}>UP</div>
-        </BackTop> */}
       </div>
     );
   }
@@ -111,6 +82,7 @@ class Details extends React.Component {
     let reg = /<div id=\"t\d\">/;
     let idreg = /t\d/;
     let data = this.state.data;
+    console.log('data: ', data);
     data.content=data.content.replace(/<b class="bb1">/g,'<b class="bb1"><img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:10px" src="'+imgup+'"/>');
     data.content=data.content.replace(/<b class="bb2">/g,'<b class="bb2"><img style="width:10px;transform:rotate(-90deg);transition:transform .3s;margin-right:10px" src="'+imgup+'"/>');
     data.content=data.content.replace(/<span>/g,'<span class="mainbox">');
@@ -129,17 +101,19 @@ class Details extends React.Component {
     }
   }
   componentDidMount() {
-    setTimeout(()=>{
+    if(this.state.data){
       let mainbox = document.getElementsByClassName('mainbox');
       for(let box of mainbox){
+        console.log('box: ', box);
         box.setAttribute('myheight',box.clientHeight+20);
-        box.style.maxHeight='0px'
+        setTimeout(()=>{
+          box.style.maxHeight='0px'
+        },100)
       }
       this.setState({
         visibility:false
       })
-    },100)
-
+    }
     let domarr = document.getElementsByClassName("lazyload");
     for (let dom of domarr) {
       common.lazyload(dom);

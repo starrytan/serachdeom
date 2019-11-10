@@ -5,6 +5,7 @@ import Footer from '../components/footer';
 import common from '../../static/jsx/common';
 import axios from 'axios';
 import Details from '../details/details';
+import Imgbox from '../components/imgbox';
 const {TabPane} = Tabs;
 const {Search} = Input;
 function callback(key) {
@@ -19,7 +20,8 @@ class Index extends React.Component {
             loading: false,
             pageinfo:{},
             keywords:'',
-            viewallarr:[]
+            viewallarr:[],
+            imgurl:''
         }
     }
     search = (val) => {
@@ -73,6 +75,20 @@ class Index extends React.Component {
             viewallarr:arr
         })
     }
+    viewimg = (item) => {
+        this.setState({
+          imgurl: item
+        });
+      };
+    closebox = e => {
+        e.persist();
+        if (e.target.tagName == "IMG") {
+          return;
+        }
+        this.setState({
+          imgurl: ""
+        });
+      };
     render() {
         console.log(this.state.list);
         return (
@@ -111,11 +127,11 @@ class Index extends React.Component {
                                                     key={index}
                                                     style={{
                                                     animationDelay: 0.05 *index + 's',
-                                                    maxHeight:this.state.viewallarr.indexOf(index)>-1?'2000px':'295px'
+                                                    maxHeight:this.state.viewallarr.indexOf(index)>-1?'2000px':''
                                                 }}
                                                     className={styles.box}>
-                                                    <div onClick={()=>{this.viewall(index)}} className={styles.viewall}>查看词条</div>
-                                                    <Details data={item} />
+                                                    <div onClick={()=>{this.viewall(index)}} className={styles.viewall}>{this.state.viewallarr.indexOf(index)>-1?'收起词条':'查看词条'}</div>
+                                                    <Details viewimg={this.viewimg} data={item} />
                                                  </div>
                                                
                                             )
@@ -129,6 +145,7 @@ class Index extends React.Component {
                     </TabPane>
                 </Tabs>
                 <Footer/>
+                {this.state.imgurl? <Imgbox closebox={this.closebox} imgurl={this.state.imgurl} /> : ""}
             </div>
         )
     }
