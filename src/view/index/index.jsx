@@ -87,7 +87,7 @@ class Index extends React.Component {
                             value={this.state.keywords}
                             onChange={this.handchange}
                             onSearch={this.search}/>
-                        <div className={styles.example}>搜索结果： {this
+                        <div className={styles.example}>{this
                                 .state
                                  .example
                                 .map((item) => {

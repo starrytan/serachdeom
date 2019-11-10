@@ -67,8 +67,8 @@ class Details extends React.Component {
             <p className={styles.titlename}>标题：</p>
             <p><b>{this.state.data.title}</b></p>
             <p className={styles.titlename}>章节：</p>
-            <p><b>{this.state.data.capter}</b></p>*/}
-            <p className={styles.titlename}><b>简介：</b></p>
+            <p><b>{this.state.data.capter}</b></p>
+            <p className={styles.titlename}><b>简介：</b></p>*/}
             <p>{this.state.data.section}</p>
             <div
               onClick={this.flexible}
