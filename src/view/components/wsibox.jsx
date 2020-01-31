@@ -4,7 +4,8 @@ import '../../static/css/viewer-l.pcss';
 import '../../static/css/viewer-p.pcss';
 import $ from 'jquery';
 import PropTypes from 'prop-types';
-const SERVER_PROPERTIES = { openslide: { url: 'http://2749q65j10.qicp.vip/myserv' } };
+const SERVER_PROPERTIES = { openslide: { url: 'http://localhost:8088/myserv' } };
+//const SERVER_PROPERTIES = { openslide: { url: 'http://2749q65j10.qicp.vip/myserv' } };
 
 
 

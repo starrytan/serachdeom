@@ -15,7 +15,7 @@ class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            example: [],
+            example: ['小叶瘤变','假泌乳性增生'],
             list:[],
             loading: false,
             pageinfo:{},
@@ -104,12 +104,12 @@ class Index extends React.Component {
                             value={this.state.keywords}
                             onChange={this.handchange}
                             onSearch={this.search}/>
-                        <div className={styles.example}>{this
+                        <div className={styles.example}>快捷目录：{this
                                 .state
                                  .example
                                 .map((item) => {
                                     return (
-                                        <a href='#' key={item}>{item}</a>
+                                        <a href='javascript:void(0);' onClick={() => { this.search(item)}} key={item}>{item}</a>
                                     )
                                 })}</div>
                         <hr className={styles.hr}></hr>
