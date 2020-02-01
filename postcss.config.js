@@ -1,5 +1,6 @@
 module.exports = {
+    parser: require('postcss-scss'),
     plugins: {
-        'postcss-nested':{}
+        'precss': {}
     }   
   }
