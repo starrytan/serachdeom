@@ -6,6 +6,8 @@ import common from '../../static/jsx/common';
 import axios from 'axios';
 import Details from '../details/details';
 import Imgbox from '../components/imgbox';
+import Header from "../components/header";
+
 const {TabPane} = Tabs;
 const {Search} = Input;
 function callback(key) {
@@ -31,6 +33,7 @@ class Index extends React.Component {
             this.getdata(0);
         });
         window.history.replaceState({},'','?keywords='+val);
+        return false;
     }
     getdata = (pageNo) => {
         console.log('pageNo: ', pageNo);
@@ -93,62 +96,94 @@ class Index extends React.Component {
     render() {
         console.log(this.state.list);
         return (
-            <div>
-                <header className={styles.header}><img height='200' src={require('../../static/img/header.png')}/></header>
-                <Tabs defaultActiveKey="1" onChange={callback}>
-                    <TabPane tab="知识图谱语义搜索" key="1">
-                        <Search
-                            placeholder="请输入关键词"
-                            enterButton="搜索"
-                            size="large"
-                            value={this.state.keywords}
-                            onChange={this.handchange}
-                            onSearch={this.search}/>
-                        <div className={styles.example}>快捷目录：{this
-                                .state
-                                 .example
-                                .map((item) => {
-                                    return (
-                                        <a href='javascript:void(0);' onClick={() => { this.search(item)}} key={item}>{item}</a>
-                                    )
-                                })}</div>
-                        <hr className={styles.hr}></hr>
-                        <div className={styles.listbox}>
-                            {this.state.loading
-                                ? <Spin className={styles.loading} size="large"/>
-                                : this.state.list.length == 0
-                                    ? <div className={styles.nothing}>暂无数据</div>
-                                    : this
-                                        .state
-                                        .list
-                                        .map((item, index) => {
-                                            return (
-                                                 <div
-                                                    id={'box' + index}
-                                                    key={index}
-                                                    style={{
-                                                    animationDelay: 0.05 *index + 's',
-                                                    maxHeight:this.state.viewallarr.indexOf(index)>-1?'none':index==0?'400px':'100px'
-                                                }}
-                                                    className={styles.box}>
-                                                    {/* <div onClick={()=>{this.viewall(index)}} className={styles.viewall}>{this.state.viewallarr.indexOf(index)>-1?'收起词条':'查看词条'}</div> */}
-                                                    <Details unfold={this.viewall} viewimg={this.viewimg} data={item} index={index} />
-                                                 </div>
-                                               
-                                            )
-                                        })}
-                        </div>
-                        <div className={styles.pagination}><Pagination
-                            showQuickJumper
-                            defaultCurrrent={0}
-                            total={this.state.pageinfo.pageTotal}
-                            onChange={this.getdata}/></div>
-                    </TabPane>
-                </Tabs>
-                <Footer/>
-                {this.state.imgurl? <Imgbox closebox={this.closebox} imgurl={this.state.imgurl} /> : ""}
+          <div>
+            <Header />
+            <div className="mainbox">
+              <header className={styles.header}>
+                <img
+                  height="200"
+                  src={require("../../static/img/header.png")}
+                />
+              </header>
+              <Tabs defaultActiveKey="1" onChange={callback}>
+                <TabPane tab="知识图谱语义搜索" key="1">
+                  <Search
+                    placeholder="请输入关键词"
+                    enterButton="搜索"
+                    size="large"
+                    value={this.state.keywords}
+                    onChange={this.handchange}
+                    onSearch={this.search}
+                  />
+                  <div className={styles.example}>
+                    快捷目录：
+                    {this.state.example.map(item => {
+                      return (
+                        <a
+                          onClick={() => {
+                            this.search(item);
+                          }}
+                          key={item}
+                        >
+                          {item}
+                        </a>
+                      );
+                    })}
+                  </div>
+                  <hr className={styles.hr}></hr>
+                  <div className={styles.listbox}>
+                    {this.state.loading ? (
+                      <Spin className={styles.loading} size="large" />
+                    ) : this.state.list.length == 0 ? (
+                      <div className={styles.nothing}>暂无数据</div>
+                    ) : (
+                      this.state.list.map((item, index) => {
+                        return (
+                          <div
+                            id={"box" + index}
+                            key={index}
+                            style={{
+                              animationDelay: 0.05 * index + "s",
+                              maxHeight:
+                                this.state.viewallarr.indexOf(index) > -1
+                                  ? "none"
+                                  : index == 0
+                                  ? "400px"
+                                  : "100px"
+                            }}
+                            className={styles.box}
+                          >
+                            {/* <div onClick={()=>{this.viewall(index)}} className={styles.viewall}>{this.state.viewallarr.indexOf(index)>-1?'收起词条':'查看词条'}</div> */}
+                            <Details
+                              unfold={this.viewall}
+                              viewimg={this.viewimg}
+                              data={item}
+                              index={index}
+                            />
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                  <div className={styles.pagination}>
+                    <Pagination
+                      showQuickJumper
+                      defaultCurrrent={0}
+                      total={this.state.pageinfo.pageTotal}
+                      onChange={this.getdata}
+                    />
+                  </div>
+                </TabPane>
+              </Tabs>
             </div>
-        )
+            <Footer />
+            {this.state.imgurl ? (
+              <Imgbox closebox={this.closebox} imgurl={this.state.imgurl} />
+            ) : (
+              ""
+            )}
+          </div>
+        );
     }
     componentWillMount() {
         

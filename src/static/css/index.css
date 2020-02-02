@@ -1,21 +1,43 @@
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
-#root{
-  max-width: 1170px;
+#root {
+}
+.mainbox {
+  max-width: 1200px;
   margin: 0 auto;
   padding: 10px 20px;
 }
-html{
-  height: auto !important; 
+html {
+  height: auto !important;
 }
-html,body{
-  scroll-behavior:smooth
+html,
+body {
+  scroll-behavior: smooth;
 }
-.lazyload{
+.lazyload {
   opacity: 0;
   transition: opacity 1s;
 }
-$normalblue:#22a9ff;
+.tranall{
+  transition: all .3s;
+}
+$normalblue: #22a9ff;
+a{
+  color: inherit;
+  text-decoration: none;
+}
+.alertmasking{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+}

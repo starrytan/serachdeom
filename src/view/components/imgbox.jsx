@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../static/css/components.pcss";
+import styles from "../../static/css/components.module.css";
 import WSIBox from "./wsibox";
 import PropTypes from "prop-types";
 const ImgBox = ({imgurl, closebox}) => {
