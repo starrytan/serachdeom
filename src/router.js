@@ -9,6 +9,11 @@ class RouteConfig extends React.Component{
             <Router history={history}>
             <Switch>
                 <Route path='/index' component={asyncComponent(()=>import('./view/index/index.jsx'))} />
+                < Route path = '/index'
+                component = {
+                    asyncComponent(() => import('./view/index/index.jsx'))
+                }
+                />
                 <Route path='/details' component={asyncComponent(()=>import('./view/details/details.jsx'))} />
                 <Redirect from='/' to='/index' />
             </Switch>
