@@ -92,15 +92,23 @@
 }
 
 .alertbox{
-    width: 400px;
+    width:350px;
     background: #fff;
     border-radius: 10px;
-    height: 100px;
     position: relative;
+    padding: 0 25px;
     .alertclose{
         position: absolute;
-        right: 10px;
-        top: 10px;
+        right: 15px;
+        top: 15px;
         cursor: pointer;
     }
+    .alerttitle{
+      font-size: 18px;
+      text-align: center;
+      line-height: 60px;
+    }
+}
+.btn1{
+  width: 100%;
 }

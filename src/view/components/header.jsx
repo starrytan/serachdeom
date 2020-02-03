@@ -8,7 +8,7 @@ class Header extends React.Component {
     super(props);
     this.state = {
       loginshow: false,
-      registershow: false
+      registershow: true
     };
   }
   openlg = () => {
@@ -42,8 +42,8 @@ class Header extends React.Component {
             <span onClick={this.openlg}>登录</span>
           </div>
         </div>
-        {this.state.loginshow ? <Login close={this.close} /> : ""}
-        {this.state.registershow ? <Register close={this.close} /> : ""}
+        {this.state.loginshow ? <Login openreg={this.openreg} close={this.close} /> : ""}
+        {this.state.registershow ? <Register openlg={this.openlg} close={this.close} /> : ""}
       </div>
     );
   }

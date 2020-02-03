@@ -41,3 +41,33 @@ a{
   justify-content: center;
   z-index: 99;
 }
+.ant-form-item{
+  margin-bottom: 14.6px!important;
+}
+.ant-form-explain{
+  font-size: 12px!important;
+  min-height: auto!important;
+}
+.ant-form-item-with-help{
+  margin-bottom: 0!important;
+}
+.flexbet{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.textbtn{
+  color: #40a9ff;
+  cursor: pointer;
+  transition: all .3s;
+}
+.textbtn:hover{
+  color: #1890ff;
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button{
+    -webkit-appearance: none !important;
+    margin: 0;
+}
+/*在firefox下移除input[number]的上下箭头*/
+input[type="number"]{-moz-appearance:textfield;}
