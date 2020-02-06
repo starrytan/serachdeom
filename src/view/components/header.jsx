@@ -2,13 +2,14 @@ import React from "react";
 import styles from "../../static/css/components.module.css";
 import Login from "./login";
 import Register from "./register";
+import { Icon, Input } from "antd";
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loginshow: false,
-      registershow: true
+      registershow: false
     };
   }
   openlg = () => {
@@ -37,13 +38,37 @@ class Header extends React.Component {
       <div className={styles.header}>
         <div className={styles.headerbox}>
           <div>学习系统</div>
-          <div>
-            <span onClick={this.openreg}>注册</span>
-            <span onClick={this.openlg}>登录</span>
+          <div className="flexstart">
+            <div className={styles.searchbox}>
+              {" "}
+              <Input
+                placeholder="搜索"
+                
+                suffix={
+                  <Icon
+                    onClick={this.search}
+                    style={{ cursor: "pointer" }}
+                    type="search"
+                  />
+                }
+              />
+            </div>
+            <div className={`${styles.lgbox} flexstart`}>
+              <span onClick={this.openreg}>注册</span>
+              <span onClick={this.openlg}>登录</span>
+            </div>
           </div>
         </div>
-        {this.state.loginshow ? <Login openreg={this.openreg} close={this.close} /> : ""}
-        {this.state.registershow ? <Register openlg={this.openlg} close={this.close} /> : ""}
+        {this.state.loginshow ? (
+          <Login openreg={this.openreg} close={this.close} />
+        ) : (
+          ""
+        )}
+        {this.state.registershow ? (
+          <Register openlg={this.openlg} close={this.close} />
+        ) : (
+          ""
+        )}
       </div>
     );
   }

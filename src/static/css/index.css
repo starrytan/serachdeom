@@ -56,6 +56,11 @@ a{
   justify-content: space-between;
   align-items: center;
 }
+.flexstart{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 .textbtn{
   color: #40a9ff;
   cursor: pointer;

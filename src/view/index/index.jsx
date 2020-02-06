@@ -99,12 +99,6 @@ class Index extends React.Component {
           <div>
             <Header />
             <div className="mainbox">
-              <header className={styles.header}>
-                <img
-                  height="200"
-                  src={require("../../static/img/header.png")}
-                />
-              </header>
               <Tabs defaultActiveKey="1" onChange={callback}>
                 <TabPane tab="知识图谱语义搜索" key="1">
                   <Search
@@ -115,7 +109,7 @@ class Index extends React.Component {
                     onChange={this.handchange}
                     onSearch={this.search}
                   />
-                  <div className={styles.example}>
+                  {/* <div className={styles.example}>
                     快捷目录：
                     {this.state.example.map(item => {
                       return (
@@ -129,7 +123,7 @@ class Index extends React.Component {
                         </a>
                       );
                     })}
-                  </div>
+                  </div> */}
                   <hr className={styles.hr}></hr>
                   <div className={styles.listbox}>
                     {this.state.loading ? (
@@ -165,14 +159,14 @@ class Index extends React.Component {
                       })
                     )}
                   </div>
-                  <div className={styles.pagination}>
+                  {/* <div className={styles.pagination}>
                     <Pagination
                       showQuickJumper
                       defaultCurrrent={0}
                       total={this.state.pageinfo.pageTotal}
                       onChange={this.getdata}
                     />
-                  </div>
+                  </div> */}
                 </TabPane>
               </Tabs>
             </div>
