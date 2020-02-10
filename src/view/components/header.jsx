@@ -9,7 +9,8 @@ class Header extends React.Component {
     super(props);
     this.state = {
       loginshow: false,
-      registershow: false
+      registershow: false,
+      keyword: ""
     };
   }
   openlg = () => {
@@ -17,22 +18,35 @@ class Header extends React.Component {
       loginshow: true
     });
   };
-  openreg=() => {
+  openreg = () => {
     this.setState({
       registershow: true
     });
   };
-  close=(type)=>{
-      if(type=='login'){
-          this.setState({
-            loginshow:false
-          });
-      }else{
-          this.setState({
-            registershow: false
-          });
-      }
-  }
+  close = type => {
+    if (type == "login") {
+      this.setState({
+        loginshow: false
+      });
+    } else {
+      this.setState({
+        registershow: false
+      });
+    }
+  };
+  search = () => {
+    console.log("搜索");
+  };
+  entersearch = e => {
+    if (e.keyCode === 13) {
+      this.search();
+    }
+  };
+  keywordchange=(e)=>{
+    this.setState({
+      keyword: e.target.value
+    });
+  };
   render() {
     return (
       <div className={styles.header}>
@@ -40,10 +54,11 @@ class Header extends React.Component {
           <div>学习系统</div>
           <div className="flexstart">
             <div className={styles.searchbox}>
-              {" "}
               <Input
+                onKeyDown={this.entersearch}
+                value={this.state.keyword}
+                onChange={this.keywordchange}
                 placeholder="搜索"
-                
                 suffix={
                   <Icon
                     onClick={this.search}
